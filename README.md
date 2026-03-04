@@ -1,13 +1,14 @@
 # 📸 Galeria de Fotos Full Stack (Python + Flask)
 
-Este é um projeto Full Stack desenvolvido do zero para criar uma galeria de fotos dinâmica. O sistema permite o upload de imagens, armazenamento em um banco de dados MySQL e a exclusão completa (tanto do banco quanto do arquivo físico no servidor).
+Este é um projeto Full Stack desenvolvido do zero para criar uma galeria de fotos dinâmica. O sistema possui o ciclo CRUD completo (Create, Read, Update, Delete) com armazenamento em um banco de dados MySQL e gerenciamento de arquivos físicos no servidor.
 
-## 🚀 Funcionalidades Até o Momento
+## 🚀 Funcionalidades da Aplicação
 
-- **Upload de Imagens:** Envio de arquivos de imagem via formulário HTML (`enctype="multipart/form-data"`).
-- **Armazenamento Seguro:** As imagens são salvas localmente na pasta `static/uploads` com nomes validados pelo `secure_filename`.
-- **Leitura de Dados (Read):** Exibição dinâmica das fotos cadastradas no banco de dados diretamente na interface web usando o motor de templates Jinja2.
-- **Exclusão de Dados (Delete):** Remoção de um registro específico, que apaga a linha no banco de dados e remove fisicamente o arquivo da pasta do servidor para otimizar armazenamento.
+- **Upload de Imagens (Create):** Envio de arquivos de imagem via formulário HTML com validação de segurança (`secure_filename`). As imagens são salvas localmente na pasta `static/uploads`.
+- **Leitura de Dados (Read):** Exibição dinâmica das fotos cadastradas no banco de dados na interface web usando o motor de templates Jinja2.
+- **Edição de Títulos (Update):** Interface dedicada para renomear o título de fotos já enviadas, atualizando os registros em tempo real no banco de dados.
+- **Exclusão Completa (Delete):** Remoção de um registro específico, que apaga a linha no banco de dados e remove fisicamente o arquivo da pasta do servidor para otimizar o armazenamento.
+- **Feedback Visual (Flash Messages):** Sistema de alertas integrado que notifica o usuário instantaneamente sobre o sucesso de suas ações (uploads, edições e exclusões).
 
 ## 🛠️ Tecnologias Utilizadas
 

@@ -75,6 +75,16 @@
     <div class="container">
       <h1>📸 Minha Galeria de Fotos</h1>
 
+      {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div style="background-color: #d4edda; color: #155724; padding: 15px; margin-bottom: 20px; border-radius: 5px; text-align: center; border: 1px solid #c3e6cb; font-weight: bold;">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
       <div class="upload-form">
         <h3>Adicionar Nova Foto</h3>
         <form action="/upload" method="POST" enctype="multipart/form-data">
@@ -101,22 +111,13 @@
           />
           <h4>{{ foto.titulo }}</h4>
 
-          <form
-            action="{{ url_for('deletar_foto', id=foto.id) }}"
-            method="POST"
-            style="margin-top: 10px"
-          >
-            <button
-              type="submit"
-              style="
-                background-color: #dc3545;
-                padding: 8px 15px;
-                font-size: 14px;
-              "
-            >
-              🗑️ Excluir
-            </button>
-          </form>
+          <div style="margin-top: 10px; display: flex; gap: 10px;">
+                            <a href="{{ url_for('editar_foto', id=foto.id) }}" style="background-color: #ffc107; color: black; padding: 8px 15px; text-decoration: none; font-size: 14px; border-radius: 3px;">✏️ Editar</a>
+                            
+                            <form action="{{ url_for('deletar_foto', id=foto.id) }}" method="POST">
+                                <button type="submit" style="background-color: #dc3545; color: white; border: none; padding: 8px 15px; font-size: 14px; border-radius: 3px; cursor: pointer;">🗑️ Excluir</button>
+                            </form>
+
         </div>
         {% endfor %} {% else %}
         <p>Nenhuma foto enviada ainda. Seja o primeiro!</p>

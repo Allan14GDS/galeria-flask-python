@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Editar Foto</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <h1>✏️ Editar Título da Foto</h1>
+
+      <div style="text-align: center; margin-bottom: 20px">
+        <img
+          src="{{ url_for('static', filename='uploads/' + foto.nome_arquivo) }}"
+          alt="Foto"
+          width="200"
+        />
+      </div>
+
+      <form action="{{ url_for('editar_foto', id=foto.id) }}" method="POST">
+        <label for="titulo">Novo Título:</label>
+        <input
+          type="text"
+          name="titulo"
+          id="titulo"
+          value="{{ foto.titulo }}"
+          required
+        />
+
+        <div style="margin-top: 20px; display: flex; gap: 10px">
+          <button type="submit" style="background-color: #28a745; width: 50%">
+            💾 Salvar Alteração
+          </button>
+          <a
+            href="{{ url_for('home') }}"
+            style="
+              background-color: #6c757d;
+              color: white;
+              text-align: center;
+              text-decoration: none;
+              padding: 10px;
+              width: 50%;
+              border-radius: 5px;
+            "
+            >Cancelar</a
+          >
+        </div>
+      </form>
+    </div>
+  </body>
+</html>

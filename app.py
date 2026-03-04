@@ -1,9 +1,10 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, flash
 import pymysql
 import os
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
+app.secret_key = 'super_chave_secreta_do_pirata' # O Flask exige isso para os alertas!
 
 # Configuração de onde as fotos serão salvas fisicamente
 PASTA_UPLOADS = 'static/uploads'
@@ -68,6 +69,7 @@ def upload_foto():
         conexao.close()
 
     # 5. Recarrega a página inicial
+    flash('✅ Foto enviada com sucesso!')
     return redirect(url_for('home'))
 
 # Rota para deletar uma foto
@@ -94,6 +96,36 @@ def deletar_foto(id):
     conexao.close()
     
     # 4. Recarrega a página inicial
+    flash('🗑️ Foto excluída com sucesso!')
     return redirect(url_for('home'))
+
+# Rota para editar o título de uma foto
+@app.route('/editar/<int:id>', methods=['GET', 'POST'])
+def editar_foto(id):
+    conexao = conectar_banco()
+    cursor = conexao.cursor(pymysql.cursors.DictCursor)
+    
+    # Se o formulário foi enviado (POST)
+    if request.method == 'POST':
+        novo_titulo = request.form['titulo']
+        
+        # Atualiza o banco de dados
+        cursor.execute("UPDATE fotos SET titulo = %s WHERE id = %s", (novo_titulo, id))
+        conexao.commit()
+        
+        cursor.close()
+        conexao.close()
+        flash('✏️ Título atualizado com sucesso!')
+        return redirect(url_for('home'))
+    
+    # Se está apenas abrindo a página de edição (GET)
+    cursor.execute("SELECT * FROM fotos WHERE id = %s", (id,))
+    foto = cursor.fetchone()
+    
+    cursor.close()
+    conexao.close()
+    
+    return render_template('editar.html', foto=foto)
+
 if __name__ == '__main__':
     app.run(debug=True)
