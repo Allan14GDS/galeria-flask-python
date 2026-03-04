@@ -1,22 +1,22 @@
 # 📸 Galeria de Fotos Full Stack (Python + Flask)
 
-Este é um projeto Full Stack desenvolvido do zero para criar uma galeria de fotos dinâmica. O sistema possui o ciclo CRUD completo (Create, Read, Update, Delete) com armazenamento em um banco de dados MySQL e gerenciamento de arquivos físicos no servidor.
+Este é um projeto Full Stack desenvolvido do zero para criar uma galeria de fotos dinâmica. O sistema possui o ciclo CRUD completo (Create, Read, Update, Delete) com armazenamento em um banco de dados MySQL e gerenciamento de arquivos físicos no servidor, aliado a uma interface de usuário (UI) moderna e responsiva.
 
 ## 🚀 Funcionalidades da Aplicação
 
-- **Upload de Imagens (Create):** Envio de arquivos de imagem via formulário HTML com validação de segurança (`secure_filename`). As imagens são salvas localmente na pasta `static/uploads`.
-- **Leitura de Dados (Read):** Exibição dinâmica das fotos cadastradas no banco de dados na interface web usando o motor de templates Jinja2.
+- **Upload via Drag and Drop (Create):** Área interativa para envio de arquivos arrastando e soltando ou clicando, com validação de segurança (`secure_filename`). As imagens são salvas localmente na pasta `static/uploads`.
+- **Leitura de Dados e Visualização Avançada (Read):** Exibição dinâmica das fotos usando o motor Jinja2. Conta com um visualizador em tela cheia (Modal/Lightbox) acionado ao clicar nas imagens, permitindo visualizar os detalhes sem recarregar a página.
 - **Edição de Títulos (Update):** Interface dedicada para renomear o título de fotos já enviadas, atualizando os registros em tempo real no banco de dados.
 - **Exclusão Completa (Delete):** Remoção de um registro específico, que apaga a linha no banco de dados e remove fisicamente o arquivo da pasta do servidor para otimizar o armazenamento.
 - **Prevenção de Exclusão Acidental:** Implementação de alertas de confirmação em JavaScript para evitar a deleção indesejada de registros.
-- **Feedback Visual (Flash Messages):** Sistema de alertas integrado que notifica o usuário instantaneamente sobre o sucesso de suas ações (uploads, edições e exclusões).
-- **Interface Responsiva (Masonry Layout):** Design moderno com grid dinâmico em CSS. As imagens mantêm suas proporções originais sem cortes e os cartões se reorganizam automaticamente conforme o tamanho da tela.
+- **Notificações Flutuantes (Toasts):** Sistema de alertas visuais animados e auto-destrutivos que notificam o usuário instantaneamente sobre o sucesso de suas ações de forma não intrusiva.
+- **Interface Premium (Masonry Layout & UI Polish):** Design profissional utilizando tipografia moderna (Inter), sombras difusas, variáveis CSS e grid dinâmico (Masonry). As imagens mantêm suas proporções originais sem cortes e os cartões se reorganizam automaticamente conforme o dispositivo.
 
 ## 🛠️ Tecnologias Utilizadas
 
 - **Backend:** Python 3, Flask, Werkzeug
 - **Banco de Dados:** MySQL, PyMySQL
-- **Frontend:** HTML5, CSS3, JavaScript, Jinja2
+- **Frontend:** HTML5, CSS3, JavaScript (Vanilla), Jinja2
 
 ## ⚙️ Como Rodar o Projeto Localmente
 

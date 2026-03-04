@@ -3,219 +3,588 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Galeria Full Stack</title>
+    <title>Galeria Pro</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
     <style>
-      /* Configurações Gerais */
-      body {
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        background-color: #f4f7f6;
-        margin: 0;
-        padding: 20px;
-        text-align: center;
-      }
-      .container {
-        max-width: 1000px;
-        margin: 0 auto;
-        background: white;
-        padding: 30px;
-        border-radius: 12px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-      }
-      h1 {
-        color: #333;
+      /* --- Base e Variáveis --- */
+      :root {
+        --primary: #4f46e5;
+        --primary-hover: #4338ca;
+        --danger: #ef4444;
+        --warning: #f59e0b;
+        --success: #10b981;
+        --bg-color: #f9fafb;
+        --card-bg: #ffffff;
+        --text-main: #111827;
+        --text-muted: #6b7280;
       }
 
-      /* Formulário de Upload */
-      .upload-form {
-        margin: 20px 0;
-        padding: 20px;
-        border: 2px dashed #ccc;
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-main);
+        margin: 0;
+        padding: 40px 20px;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .header-title {
+        text-align: center;
+        font-size: 2.5rem;
+        font-weight: 800;
+        letter-spacing: -0.025em;
+        margin-bottom: 40px;
+      }
+      .header-title span {
+        color: var(--primary);
+      }
+
+      /* --- Upload Section --- */
+      .upload-section {
+        background: var(--card-bg);
+        padding: 30px;
+        border-radius: 16px;
+        box-shadow:
+          0 4px 6px -1px rgba(0, 0, 0, 0.05),
+          0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        margin-bottom: 50px;
+      }
+      .upload-section h3 {
+        margin-top: 0;
+        text-align: center;
+        font-size: 1.25rem;
+        margin-bottom: 24px;
+      }
+      .upload-form-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        max-width: 500px;
+        margin: 0 auto;
+      }
+      .input-moderno {
+        width: 100%;
+        padding: 14px 16px;
+        border: 1px solid #d1d5db;
         border-radius: 8px;
-        background-color: #fafafa;
+        font-size: 1rem;
+        font-family: "Inter", sans-serif;
+        box-sizing: border-box;
+        transition: all 0.2s ease;
       }
-      input[type="text"],
-      input[type="file"] {
-        margin: 10px 0;
-        padding: 10px;
-        width: 80%;
-        border: 1px solid #ddd;
-        border-radius: 5px;
+      .input-moderno:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
       }
-      .btn-enviar {
-        background-color: #007bff;
+
+      /* --- NOVO: Drag and Drop Zone --- */
+      .dropzone {
+        border: 2px dashed #d1d5db;
+        border-radius: 8px;
+        padding: 30px 20px;
+        text-align: center;
+        background-color: #f9fafb;
+        position: relative;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      .dropzone:hover,
+      .dropzone.dragover {
+        border-color: var(--primary);
+        background-color: #eff6ff;
+      }
+      .dropzone-input {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        opacity: 0;
+        cursor: pointer;
+      }
+      .dropzone-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+        pointer-events: none; /* Deixa o clique passar para o input invisível */
+      }
+      .dropzone-content span {
+        color: var(--text-muted);
+        font-size: 0.95rem;
+      }
+      .dropzone-content strong {
+        color: var(--primary);
+      }
+
+      .btn-moderno {
+        background-color: var(--primary);
         color: white;
         border: none;
-        padding: 10px 30px;
-        border-radius: 5px;
+        padding: 14px 24px;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
         cursor: pointer;
-        font-size: 16px;
-        transition: 0.3s;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
       }
-      .btn-enviar:hover {
-        background-color: #0056b3;
+      .btn-moderno:hover {
+        background-color: var(--primary-hover);
+        transform: translateY(-1px);
       }
 
-      /* Grid da Galeria - Estilo Masonry (Pinterest) */
+      /* --- Toasts (Notificações Flutuantes) --- */
+      .toast-container {
+        position: fixed;
+        top: 24px;
+        right: 24px;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .toast {
+        background-color: var(--card-bg);
+        color: var(--text-main);
+        padding: 16px 24px;
+        border-left: 4px solid var(--success);
+        border-radius: 8px;
+        box-shadow:
+          0 10px 15px -3px rgba(0, 0, 0, 0.1),
+          0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-width: 280px;
+        font-weight: 500;
+        animation: slideInRight 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        transition:
+          opacity 0.3s ease,
+          transform 0.3s ease;
+      }
+      .toast.hide {
+        opacity: 0;
+        transform: translateX(100%);
+      }
+      .toast-close {
+        cursor: pointer;
+        color: var(--text-muted);
+        font-size: 1.25rem;
+        margin-left: 16px;
+        transition: color 0.2s;
+      }
+      .toast-close:hover {
+        color: var(--danger);
+      }
+      @keyframes slideInRight {
+        from {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      /* --- Galeria Masonry --- */
       .galeria {
         column-count: 3;
-        column-gap: 20px;
-        margin-top: 30px;
+        column-gap: 24px;
       }
-
-      /* Responsividade para telas menores */
-      @media (max-width: 800px) {
+      @media (max-width: 900px) {
         .galeria {
           column-count: 2;
         }
       }
-      @media (max-width: 500px) {
+      @media (max-width: 600px) {
         .galeria {
           column-count: 1;
         }
       }
 
-      /* Estilo do Card Profissional */
       .foto-card {
-        background: #fff;
-        border: 1px solid #ddd;
-        border-radius: 10px;
+        background: var(--card-bg);
+        border-radius: 16px;
         overflow: hidden;
+        box-shadow:
+          0 10px 15px -3px rgba(0, 0, 0, 0.05),
+          0 4px 6px -2px rgba(0, 0, 0, 0.025);
+        break-inside: avoid;
+        margin-bottom: 24px;
         transition:
-          transform 0.3s,
-          box-shadow 0.3s;
-        display: flex;
-        flex-direction: column;
-        break-inside: avoid; /* Evita que o card quebre entre as colunas */
-        margin-bottom: 20px; /* Espaçamento entre os cards na vertical */
+          transform 0.3s ease,
+          box-shadow 0.3s ease;
       }
       .foto-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        transform: translateY(-8px);
+        box-shadow:
+          0 20px 25px -5px rgba(0, 0, 0, 0.1),
+          0 10px 10px -5px rgba(0, 0, 0, 0.04);
       }
-
-      /* Imagem com altura dinâmica */
       .foto-card img {
         width: 100%;
-        height: auto; /* A imagem dita a altura do card sem distorcer */
+        height: auto;
         display: block;
+        cursor: zoom-in;
       }
-
       .foto-info {
-        padding: 15px;
+        padding: 20px;
       }
       .foto-info h4 {
-        margin: 0;
-        color: #333;
-        font-size: 18px;
+        margin: 0 0 16px 0;
+        font-size: 1.125rem;
+        font-weight: 600;
       }
-
-      /* Botões dentro do Card */
       .botoes-card {
         display: flex;
-        justify-content: center;
-        gap: 10px;
-        padding: 0 15px 15px 15px;
+        gap: 12px;
+      }
+      .btn-acao {
+        flex: 1;
+        padding: 10px;
+        border-radius: 6px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        text-align: center;
+        text-decoration: none;
+        cursor: pointer;
+        border: none;
+        transition: opacity 0.2s;
+      }
+      .btn-acao:hover {
+        opacity: 0.85;
       }
       .btn-editar {
-        background-color: #ffc107;
-        color: black;
-        padding: 8px 15px;
-        text-decoration: none;
-        font-size: 14px;
-        border-radius: 3px;
-        font-weight: bold;
+        background-color: var(--warning);
+        color: #fff;
       }
       .btn-excluir {
-        background-color: #dc3545;
+        background-color: var(--danger);
         color: white;
-        border: none;
-        padding: 8px 15px;
-        font-size: 14px;
-        border-radius: 3px;
+      }
+
+      /* --- Modal (Lightbox) --- */
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.85);
+        backdrop-filter: blur(8px);
+        overflow: auto;
+      }
+      .modal-content {
+        margin: 5% auto;
+        display: block;
+        max-width: 90%;
+        max-height: 80vh;
+        border-radius: 8px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        animation: zoomIn 0.3s ease;
+        object-fit: contain;
+      }
+      #captionModal {
+        margin: auto;
+        display: block;
+        width: 80%;
+        text-align: center;
+        color: #e5e7eb;
+        padding: 15px 0;
+        font-size: 1.25rem;
+        font-weight: 500;
+        animation: zoomIn 0.3s ease;
+      }
+      .fechar-modal {
+        position: absolute;
+        top: 20px;
+        right: 40px;
+        color: #f3f4f6;
+        font-size: 40px;
+        font-weight: bold;
         cursor: pointer;
+        transition: 0.2s;
+      }
+      .fechar-modal:hover {
+        color: var(--danger);
+      }
+      @keyframes zoomIn {
+        from {
+          transform: scale(0.95);
+          opacity: 0;
+        }
+        to {
+          transform: scale(1);
+          opacity: 1;
+        }
       }
     </style>
   </head>
   <body>
-    <div class="container">
-      <h1>📸 Minha Galeria de Fotos</h1>
-
+    <div class="toast-container" id="toastContainer">
       {% with messages = get_flashed_messages() %} {% if messages %} {% for
       message in messages %}
-      <div
-        style="
-          background-color: #d4edda;
-          color: #155724;
-          padding: 15px;
-          margin-bottom: 20px;
-          border-radius: 5px;
-          border: 1px solid #c3e6cb;
-          font-weight: bold;
-        "
-      >
-        {{ message }}
+      <div class="toast">
+        <span>{{ message }}</span>
+        <span class="toast-close" onclick="fecharToast(this)">&times;</span>
       </div>
       {% endfor %} {% endif %} {% endwith %}
+    </div>
 
-      <div class="upload-form">
+    <div class="container">
+      <h1 class="header-title">📸 Minha <span>Galeria</span></h1>
+
+      <div class="upload-section">
         <h3>Adicionar Nova Foto</h3>
-        <form action="/upload" method="POST" enctype="multipart/form-data">
+        <form
+          action="/upload"
+          method="POST"
+          enctype="multipart/form-data"
+          class="upload-form-grid"
+        >
           <input
             type="text"
             name="titulo"
-            placeholder="Digite o título da foto"
+            placeholder="Digite o título da foto..."
             required
-          /><br />
-          <input type="file" name="foto" accept="image/*" required /><br />
-          <button type="submit" class="btn-enviar">Subir Foto</button>
+            class="input-moderno"
+          />
+
+          <div class="dropzone" id="dropzone">
+            <input
+              type="file"
+              name="foto"
+              id="fotoInput"
+              accept="image/*"
+              required
+              class="dropzone-input"
+            />
+            <div class="dropzone-content">
+              <svg
+                width="40"
+                height="40"
+                fill="none"
+                stroke="var(--primary)"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                ></path>
+              </svg>
+              <span id="dropzone-text"
+                >Arraste sua foto aqui ou
+                <strong>clique para buscar</strong></span
+              >
+            </div>
+          </div>
+
+          <button type="submit" class="btn-moderno">
+            <svg
+              width="20"
+              height="20"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
+              ></path>
+            </svg>
+            Fazer Upload
+          </button>
         </form>
       </div>
 
-      <hr />
-
-      <h3>Fotos Recentes</h3>
       <div class="galeria">
         {% if fotos_para_tela %} {% for foto in fotos_para_tela %}
         <div class="foto-card">
           <img
             src="{{ url_for('static', filename='uploads/' + foto.nome_arquivo) }}"
             alt="{{ foto.titulo }}"
+            onclick="abrirModal(this.src, this.alt)"
           />
-
           <div class="foto-info">
             <h4>{{ foto.titulo }}</h4>
-          </div>
-
-          <div class="botoes-card">
-            <a
-              href="{{ url_for('editar_foto', id=foto.id) }}"
-              class="btn-editar"
-              >✏️ Editar</a
-            >
-
-            <form
-              action="{{ url_for('deletar_foto', id=foto.id) }}"
-              method="POST"
-              style="display: inline"
-            >
-              <button
-                type="submit"
-                class="btn-excluir"
-                onclick="
-                  return confirm(
-                    'Tem certeza que deseja excluir esta foto? Esta ação não pode ser desfeita.',
-                  );
-                "
+            <div class="botoes-card">
+              <a
+                href="{{ url_for('editar_foto', id=foto.id) }}"
+                class="btn-acao btn-editar"
+                >Editar</a
               >
-                🗑️ Excluir
-              </button>
-            </form>
+              <form
+                action="{{ url_for('deletar_foto', id=foto.id) }}"
+                method="POST"
+                style="display: flex; flex: 1; margin: 0"
+              >
+                <button
+                  type="submit"
+                  class="btn-acao btn-excluir"
+                  onclick="
+                    return confirm(
+                      'Tem certeza que deseja excluir esta foto? Esta ação não pode ser desfeita.',
+                    );
+                  "
+                  style="width: 100%"
+                >
+                  Excluir
+                </button>
+              </form>
+            </div>
           </div>
         </div>
         {% endfor %} {% else %}
-        <p>Nenhuma foto enviada ainda. Seja o primeiro!</p>
+        <p
+          style="
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            grid-column: 1 / -1;
+          "
+        >
+          Nenhuma foto enviada ainda. Seu mural está em branco!
+        </p>
         {% endif %}
       </div>
     </div>
+
+    <div id="imageModal" class="modal">
+      <span class="fechar-modal" onclick="fecharModal()">&times;</span>
+      <img class="modal-content" id="imgModal" />
+      <div id="captionModal"></div>
+    </div>
+
+    <script>
+      // --- Lógica do Modal ---
+      const modal = document.getElementById("imageModal");
+      const imgModal = document.getElementById("imgModal");
+      const captionText = document.getElementById("captionModal");
+
+      function abrirModal(src, alt) {
+        modal.style.display = "block";
+        imgModal.src = src;
+        captionText.innerHTML = alt;
+        document.body.style.overflow = "hidden";
+      }
+
+      function fecharModal() {
+        modal.style.display = "none";
+        document.body.style.overflow = "auto";
+      }
+
+      modal.addEventListener("click", function (e) {
+        if (e.target !== imgModal && e.target !== captionText) {
+          fecharModal();
+        }
+      });
+
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") {
+          fecharModal();
+        }
+      });
+
+      // --- Lógica dos Toasts Flutuantes ---
+      function fecharToast(element) {
+        const toast = element.parentElement;
+        toast.classList.add("hide");
+        setTimeout(() => toast.remove(), 300);
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const toasts = document.querySelectorAll(".toast");
+        toasts.forEach((toast) => {
+          setTimeout(() => {
+            if (document.body.contains(toast)) {
+              toast.classList.add("hide");
+              setTimeout(() => toast.remove(), 300);
+            }
+          }, 4000);
+        });
+      });
+
+      // --- Lógica do Drag and Drop ---
+      const dropzone = document.getElementById("dropzone");
+      const fotoInput = document.getElementById("fotoInput");
+      const dropzoneText = document.getElementById("dropzone-text");
+
+      // 1. Previne o comportamento padrão do navegador
+      ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) => {
+        dropzone.addEventListener(eventName, preventDefaults, false);
+      });
+
+      function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+
+      // 2. Adiciona e remove efeitos visuais ao arrastar
+      ["dragenter", "dragover"].forEach((eventName) => {
+        dropzone.addEventListener(
+          eventName,
+          () => dropzone.classList.add("dragover"),
+          false,
+        );
+      });
+
+      ["dragleave", "drop"].forEach((eventName) => {
+        dropzone.addEventListener(
+          eventName,
+          () => dropzone.classList.remove("dragover"),
+          false,
+        );
+      });
+
+      // 3. NOVO: Captura o arquivo quando ele é SOLTO (Drop) na área
+      dropzone.addEventListener("drop", function (e) {
+        let dt = e.dataTransfer;
+        let files = dt.files;
+
+        if (files.length > 0) {
+          fotoInput.files = files; // Transfere o arquivo para o input do formulário
+          atualizarTexto(files[0].name); // Atualiza a tela
+        }
+      });
+
+      // 4. Captura o arquivo quando escolhido pelo CLIQUE tradicional
+      fotoInput.addEventListener("change", function () {
+        if (this.files && this.files.length > 0) {
+          atualizarTexto(this.files[0].name);
+        } else {
+          dropzoneText.innerHTML = `Arraste sua foto aqui ou <strong>clique para buscar</strong>`;
+        }
+      });
+
+      // 5. Função auxiliar para mudar a mensagem da caixa
+      function atualizarTexto(nomeArquivo) {
+        dropzoneText.innerHTML = `<strong>Arquivo pronto:</strong> ${nomeArquivo}`;
+      }
+    </script>
   </body>
 </html>
