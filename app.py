@@ -1,10 +1,37 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 import pymysql
 import os
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 app.secret_key = 'super_chave_secreta_do_pirata' # O Flask exige isso para os alertas!
+
+# --- Configuração do Flask-Login ---
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login' # Redireciona usuários não logados para a tela de login
+login_manager.login_message = "Por favor, faça login para acessar esta página."
+
+# --- Modelo de Usuário ---
+class Usuario(UserMixin):
+    def __init__(self, id, nome, email):
+        self.id = id
+        self.nome = nome
+        self.email = email
+
+@login_manager.user_loader
+def load_user(user_id):
+    conexao = conectar_banco()
+    with conexao.cursor(pymysql.cursors.DictCursor) as cursor:
+        cursor.execute("SELECT * FROM usuarios WHERE id = %s", (user_id,))
+        usuario_db = cursor.fetchone()
+    conexao.close()
+    
+    if usuario_db:
+        return Usuario(id=usuario_db['id'], nome=usuario_db['nome'], email=usuario_db['email'])
+    return None
 
 # Configuração de onde as fotos serão salvas fisicamente
 PASTA_UPLOADS = 'static/uploads'
@@ -23,109 +50,165 @@ def conectar_banco():
     )
     return conexao
 
-# Rota principal (A página inicial)
-# Rota principal (A página inicial)
-@app.route('/')
-def home():
-    # 1. Abre a ponte com o banco de dados
-    conexao = conectar_banco()
-    
-    # Usamos o DictCursor para o Python entender os dados como um Dicionário (facilita muito no HTML!)
-    cursor = conexao.cursor(pymysql.cursors.DictCursor)
-    
-    # 2. Busca todas as fotos, ordenando da mais nova para a mais velha
-    cursor.execute("SELECT * FROM fotos ORDER BY id DESC")
-    fotos_do_banco = cursor.fetchall() # Pega todos os resultados
-    
-    # 3. Fecha as conexões
-    cursor.close()
-    conexao.close()
-    
-    # 4. Manda as fotos para o nosso arquivo HTML!
-    return render_template('index.html', fotos_para_tela=fotos_do_banco)
+# ==========================================
+# ROTAS DE AUTENTICAÇÃO (LOGIN E CADASTRO)
+# ==========================================
 
-# Rota que recebe a foto quando você clica em "Fazer Upload"
-@app.route('/upload', methods=['POST'])
-def upload_foto():
-    # 1. Pega os dados que vieram do formulário HTML
-    titulo = request.form['titulo']
-    foto = request.files['foto']
+@app.route('/cadastro', methods=['GET', 'POST'])
+def cadastro():
+    if request.method == 'POST':
+        nome = request.form['nome']
+        email = request.form['email']
+        senha = request.form['senha']
 
-    if foto.filename != '':
-        # 2. Limpa o nome do arquivo para evitar bugs (tira espaços, acentos, etc)
-        nome_arquivo = secure_filename(foto.filename)
-        
-        # 3. Salva a imagem fisicamente na pasta static/uploads
-        caminho_completo = os.path.join(app.config['UPLOAD_FOLDER'], nome_arquivo)
-        foto.save(caminho_completo)
-
-        # 4. Salva as informações no Banco de Dados MySQL
         conexao = conectar_banco()
-        cursor = conexao.cursor()
-        sql = "INSERT INTO fotos (titulo, nome_arquivo) VALUES (%s, %s)"
-        cursor.execute(sql, (titulo, nome_arquivo))
-        conexao.commit() # Confirma a gravação!
-        cursor.close()
+        cursor = conexao.cursor(pymysql.cursors.DictCursor)
+        
+        # Verifica se o e-mail já existe no banco
+        cursor.execute("SELECT * FROM usuarios WHERE email = %s", (email,))
+        se_existe = cursor.fetchone()
+
+        if se_existe:
+            flash("Este e-mail já está cadastrado. Faça o login.")
+            conexao.close()
+            return redirect(url_for('login'))
+
+        # Criptografa a senha para o banco de dados não exibir a senha real
+        senha_hash = generate_password_hash(senha)
+
+        cursor.execute("INSERT INTO usuarios (nome, email, senha_hash) VALUES (%s, %s, %s)", (nome, email, senha_hash))
+        conexao.commit()
         conexao.close()
 
-    # 5. Recarrega a página inicial
-    flash('✅ Foto enviada com sucesso!')
-    return redirect(url_for('home'))
+        flash("Cadastro realizado com sucesso! Faça seu login para acessar o painel.")
+        return redirect(url_for('login'))
 
-# Rota para deletar uma foto
-@app.route('/deletar/<int:id>', methods=['POST'])
-def deletar_foto(id):
+    return render_template('cadastro.html')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        email = request.form['email']
+        senha = request.form['senha']
+
+        conexao = conectar_banco()
+        cursor = conexao.cursor(pymysql.cursors.DictCursor)
+        cursor.execute("SELECT * FROM usuarios WHERE email = %s", (email,))
+        usuario_db = cursor.fetchone()
+        conexao.close()
+
+        # Checa se o usuário existe e se a senha digitada bate com o hash salvo
+        if usuario_db and check_password_hash(usuario_db['senha_hash'], senha):
+            usuario = Usuario(id=usuario_db['id'], nome=usuario_db['nome'], email=usuario_db['email'])
+            login_user(usuario)
+            flash(f"Bem-vindo(a) de volta, {usuario.nome}!")
+            return redirect(url_for('index'))
+        else:
+            flash("E-mail ou senha incorretos.")
+
+    return render_template('login.html')
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    flash("Você saiu da sua conta.")
+    return redirect(url_for('login'))
+
+# ==========================================
+# ROTAS DO PAINEL DA GALERIA (PROTEGIDAS)
+# ==========================================
+
+@app.route('/')
+@login_required
+def index():
     conexao = conectar_banco()
     cursor = conexao.cursor(pymysql.cursors.DictCursor)
-    
-    # 1. Busca o nome do arquivo no banco de dados para podermos apagar o arquivo físico
-    cursor.execute("SELECT nome_arquivo FROM fotos WHERE id = %s", (id,))
-    foto = cursor.fetchone() # Pega apenas o resultado específico
-    
-    if foto:
-        # 2. Apaga a imagem fisicamente da pasta static/uploads
-        caminho_arquivo = os.path.join(app.config['UPLOAD_FOLDER'], foto['nome_arquivo'])
-        if os.path.exists(caminho_arquivo):
-            os.remove(caminho_arquivo)
-        
-        # 3. Apaga o registro do banco de dados
-        cursor.execute("DELETE FROM fotos WHERE id = %s", (id,))
-        conexao.commit() # Confirma a exclusão!
-        
-    cursor.close()
+    # Traz apenas as fotos que pertencem ao usuário logado no momento
+    cursor.execute("SELECT * FROM fotos WHERE usuario_id = %s ORDER BY data_upload DESC", (current_user.id,))
+    fotos_db = cursor.fetchall()
     conexao.close()
-    
-    # 4. Recarrega a página inicial
-    flash('🗑️ Foto excluída com sucesso!')
-    return redirect(url_for('home'))
+    return render_template('index.html', fotos_para_tela=fotos_db)
 
-# Rota para editar o título de uma foto
+@app.route('/upload', methods=['POST'])
+@login_required
+def upload():
+    if 'foto' not in request.files:
+        flash('Nenhum arquivo enviado.')
+        return redirect(request.url)
+    
+    foto = request.files['foto']
+    titulo = request.form['titulo']
+    
+    if foto.filename == '':
+        flash('Nenhum arquivo selecionado.')
+        return redirect(request.url)
+        
+    if foto:
+        nome_seguro = secure_filename(foto.filename)
+        caminho_completo = os.path.join(app.config['UPLOAD_FOLDER'], nome_seguro)
+        foto.save(caminho_completo)
+        
+        conexao = conectar_banco()
+        cursor = conexao.cursor()
+        # Salva a foto e vincula o ID do usuário atual (current_user.id)
+        cursor.execute("INSERT INTO fotos (titulo, nome_arquivo, usuario_id) VALUES (%s, %s, %s)", (titulo, nome_seguro, current_user.id))
+        conexao.commit()
+        conexao.close()
+        
+        flash('Foto enviada com sucesso!')
+        return redirect(url_for('index'))
+
 @app.route('/editar/<int:id>', methods=['GET', 'POST'])
+@login_required
 def editar_foto(id):
     conexao = conectar_banco()
     cursor = conexao.cursor(pymysql.cursors.DictCursor)
     
-    # Se o formulário foi enviado (POST)
     if request.method == 'POST':
         novo_titulo = request.form['titulo']
-        
-        # Atualiza o banco de dados
-        cursor.execute("UPDATE fotos SET titulo = %s WHERE id = %s", (novo_titulo, id))
+        # Só permite editar se a foto for do usuário
+        cursor.execute("UPDATE fotos SET titulo = %s WHERE id = %s AND usuario_id = %s", (novo_titulo, id, current_user.id))
         conexao.commit()
-        
-        cursor.close()
         conexao.close()
-        flash('✏️ Título atualizado com sucesso!')
-        return redirect(url_for('home'))
-    
-    # Se está apenas abrindo a página de edição (GET)
-    cursor.execute("SELECT * FROM fotos WHERE id = %s", (id,))
-    foto = cursor.fetchone()
-    
-    cursor.close()
+        flash('Título atualizado com sucesso!')
+        return redirect(url_for('index'))
+        
+    cursor.execute("SELECT * FROM fotos WHERE id = %s AND usuario_id = %s", (id, current_user.id))
+    foto_db = cursor.fetchone()
     conexao.close()
     
-    return render_template('editar.html', foto=foto)
+    if not foto_db:
+        flash('Foto não encontrada ou você não tem permissão para editá-la.')
+        return redirect(url_for('index'))
+        
+    return render_template('editar.html', foto=foto_db)
+
+@app.route('/deletar/<int:id>', methods=['POST'])
+@login_required
+def deletar_foto(id):
+    conexao = conectar_banco()
+    cursor = conexao.cursor(pymysql.cursors.DictCursor)
+    
+    # Busca o nome do arquivo, garantindo que pertence ao usuário
+    cursor.execute("SELECT nome_arquivo FROM fotos WHERE id = %s AND usuario_id = %s", (id, current_user.id))
+    foto_db = cursor.fetchone()
+    
+    if foto_db:
+        nome_arquivo = foto_db['nome_arquivo']
+        caminho_arquivo = os.path.join(app.config['UPLOAD_FOLDER'], nome_arquivo)
+        
+        if os.path.exists(caminho_arquivo):
+            os.remove(caminho_arquivo)
+            
+        cursor.execute("DELETE FROM fotos WHERE id = %s AND usuario_id = %s", (id, current_user.id))
+        conexao.commit()
+        flash('Foto excluída permanentemente.')
+    else:
+        flash('Erro ao excluir: Foto não encontrada ou sem permissão.')
+
+    conexao.close()
+    return redirect(url_for('index'))
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cadastro - Galeria Pro</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: #f9fafb;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+      }
+      .auth-card {
+        background: white;
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 400px;
+      }
+      .auth-card h2 {
+        text-align: center;
+        color: #111827;
+        margin-top: 0;
+        margin-bottom: 24px;
+        font-weight: 700;
+        font-size: 1.8rem;
+      }
+      .input-group {
+        margin-bottom: 16px;
+      }
+      .input-group label {
+        display: block;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #374151;
+        margin-bottom: 8px;
+      }
+      .input-group input {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        font-family: "Inter";
+        box-sizing: border-box;
+        transition: 0.2s;
+      }
+      .input-group input:focus {
+        outline: none;
+        border-color: #4f46e5;
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+      }
+      .btn-submit {
+        width: 100%;
+        padding: 12px;
+        background-color: #10b981;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.2s;
+        font-size: 1rem;
+        margin-top: 10px;
+      }
+      .btn-submit:hover {
+        background-color: #059669;
+      }
+      .auth-links {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 0.875rem;
+        color: #6b7280;
+      }
+      .auth-links a {
+        color: #4f46e5;
+        text-decoration: none;
+        font-weight: 600;
+      }
+      .auth-links a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="auth-card">
+      <h2>Criar nova conta</h2>
+
+      <form action="/cadastro" method="POST">
+        <div class="input-group">
+          <label for="nome">Nome completo</label>
+          <input
+            type="text"
+            id="nome"
+            name="nome"
+            required
+            placeholder="Como devemos te chamar?"
+          />
+        </div>
+        <div class="input-group">
+          <label for="email">E-mail</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            required
+            placeholder="seu@email.com"
+          />
+        </div>
+        <div class="input-group">
+          <label for="senha">Crie uma senha</label>
+          <input
+            type="password"
+            id="senha"
+            name="senha"
+            required
+            placeholder="No mínimo 6 caracteres"
+          />
+        </div>
+        <button type="submit" class="btn-submit">
+          Criar minha conta gratuita
+        </button>
+      </form>
+
+      <div class="auth-links">
+        Já possui uma conta? <a href="/login">Fazer login</a>
+      </div>
+    </div>
+  </body>
+</html>

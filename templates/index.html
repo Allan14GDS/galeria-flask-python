@@ -39,6 +39,36 @@
         margin: 0 auto;
       }
 
+      /* --- Barra de Navegação do Usuário --- */
+      .navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: var(--card-bg);
+        padding: 16px 24px;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        margin-bottom: 30px;
+      }
+      .user-greeting {
+        font-weight: 600;
+        color: var(--text-main);
+        font-size: 1.1rem;
+      }
+      .btn-logout {
+        background-color: var(--danger);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: 0.2s;
+      }
+      .btn-logout:hover {
+        opacity: 0.85;
+      }
+
       .header-title {
         text-align: center;
         font-size: 2.5rem;
@@ -351,6 +381,12 @@
     </div>
 
     <div class="container">
+      <div class="navbar">
+        <div class="user-greeting">👋 Olá, {{ current_user.nome }}!</div>
+        <a href="/logout" class="btn-logout">Sair da conta</a>
+      </div>
+
+      <h1 class="header-title">📸 Minha <span>Galeria</span></h1>
       <h1 class="header-title">📸 Minha <span>Galeria</span></h1>
 
       <div class="upload-section">
