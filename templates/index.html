@@ -5,69 +5,134 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Galeria Full Stack</title>
     <style>
-      .foto-card {
-        border: 1px solid #ddd;
-        padding: 10px;
-        border-radius: 8px;
-        background: #fff;
-        width: 220px;
-      }
-      .foto-card img {
-        max-width: 100%;
-        border-radius: 5px;
-        height: 150px;
-        object-fit: cover;
-      }
-
-      /* Um pouco de CSS básico para deixarmos apresentável desde já */
+      /* Configurações Gerais */
       body {
-        font-family: Arial, sans-serif;
-        background-color: #f4f4f9;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f4f7f6;
         margin: 0;
         padding: 20px;
         text-align: center;
       }
       .container {
-        max-width: 800px;
+        max-width: 1000px;
         margin: 0 auto;
         background: white;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
       }
       h1 {
         color: #333;
       }
+
+      /* Formulário de Upload */
       .upload-form {
         margin: 20px 0;
         padding: 20px;
         border: 2px dashed #ccc;
         border-radius: 8px;
+        background-color: #fafafa;
       }
       input[type="text"],
       input[type="file"] {
         margin: 10px 0;
         padding: 10px;
         width: 80%;
+        border: 1px solid #ddd;
+        border-radius: 5px;
       }
-      button {
+      .btn-enviar {
         background-color: #007bff;
         color: white;
         border: none;
-        padding: 10px 20px;
+        padding: 10px 30px;
         border-radius: 5px;
         cursor: pointer;
         font-size: 16px;
+        transition: 0.3s;
       }
-      button:hover {
+      .btn-enviar:hover {
         background-color: #0056b3;
       }
+
+      /* Grid da Galeria - Estilo Masonry (Pinterest) */
       .galeria {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 15px;
+        column-count: 3;
+        column-gap: 20px;
         margin-top: 30px;
+      }
+
+      /* Responsividade para telas menores */
+      @media (max-width: 800px) {
+        .galeria {
+          column-count: 2;
+        }
+      }
+      @media (max-width: 500px) {
+        .galeria {
+          column-count: 1;
+        }
+      }
+
+      /* Estilo do Card Profissional */
+      .foto-card {
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        overflow: hidden;
+        transition:
+          transform 0.3s,
+          box-shadow 0.3s;
+        display: flex;
+        flex-direction: column;
+        break-inside: avoid; /* Evita que o card quebre entre as colunas */
+        margin-bottom: 20px; /* Espaçamento entre os cards na vertical */
+      }
+      .foto-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+      }
+
+      /* Imagem com altura dinâmica */
+      .foto-card img {
+        width: 100%;
+        height: auto; /* A imagem dita a altura do card sem distorcer */
+        display: block;
+      }
+
+      .foto-info {
+        padding: 15px;
+      }
+      .foto-info h4 {
+        margin: 0;
+        color: #333;
+        font-size: 18px;
+      }
+
+      /* Botões dentro do Card */
+      .botoes-card {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        padding: 0 15px 15px 15px;
+      }
+      .btn-editar {
+        background-color: #ffc107;
+        color: black;
+        padding: 8px 15px;
+        text-decoration: none;
+        font-size: 14px;
+        border-radius: 3px;
+        font-weight: bold;
+      }
+      .btn-excluir {
+        background-color: #dc3545;
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        font-size: 14px;
+        border-radius: 3px;
+        cursor: pointer;
       }
     </style>
   </head>
@@ -75,15 +140,22 @@
     <div class="container">
       <h1>📸 Minha Galeria de Fotos</h1>
 
-      {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                {% for message in messages %}
-                    <div style="background-color: #d4edda; color: #155724; padding: 15px; margin-bottom: 20px; border-radius: 5px; text-align: center; border: 1px solid #c3e6cb; font-weight: bold;">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
+      {% with messages = get_flashed_messages() %} {% if messages %} {% for
+      message in messages %}
+      <div
+        style="
+          background-color: #d4edda;
+          color: #155724;
+          padding: 15px;
+          margin-bottom: 20px;
+          border-radius: 5px;
+          border: 1px solid #c3e6cb;
+          font-weight: bold;
+        "
+      >
+        {{ message }}
+      </div>
+      {% endfor %} {% endif %} {% endwith %}
 
       <div class="upload-form">
         <h3>Adicionar Nova Foto</h3>
@@ -95,7 +167,7 @@
             required
           /><br />
           <input type="file" name="foto" accept="image/*" required /><br />
-          <button type="submit">Fazer Upload</button>
+          <button type="submit" class="btn-enviar">Subir Foto</button>
         </form>
       </div>
 
@@ -109,15 +181,36 @@
             src="{{ url_for('static', filename='uploads/' + foto.nome_arquivo) }}"
             alt="{{ foto.titulo }}"
           />
-          <h4>{{ foto.titulo }}</h4>
 
-          <div style="margin-top: 10px; display: flex; gap: 10px;">
-                            <a href="{{ url_for('editar_foto', id=foto.id) }}" style="background-color: #ffc107; color: black; padding: 8px 15px; text-decoration: none; font-size: 14px; border-radius: 3px;">✏️ Editar</a>
-                            
-                            <form action="{{ url_for('deletar_foto', id=foto.id) }}" method="POST">
-                                <button type="submit" style="background-color: #dc3545; color: white; border: none; padding: 8px 15px; font-size: 14px; border-radius: 3px; cursor: pointer;">🗑️ Excluir</button>
-                            </form>
+          <div class="foto-info">
+            <h4>{{ foto.titulo }}</h4>
+          </div>
 
+          <div class="botoes-card">
+            <a
+              href="{{ url_for('editar_foto', id=foto.id) }}"
+              class="btn-editar"
+              >✏️ Editar</a
+            >
+
+            <form
+              action="{{ url_for('deletar_foto', id=foto.id) }}"
+              method="POST"
+              style="display: inline"
+            >
+              <button
+                type="submit"
+                class="btn-excluir"
+                onclick="
+                  return confirm(
+                    'Tem certeza que deseja excluir esta foto? Esta ação não pode ser desfeita.',
+                  );
+                "
+              >
+                🗑️ Excluir
+              </button>
+            </form>
+          </div>
         </div>
         {% endfor %} {% else %}
         <p>Nenhuma foto enviada ainda. Seja o primeiro!</p>
