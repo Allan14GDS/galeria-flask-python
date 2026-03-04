@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Galeria Full Stack</title>
+    <style>
+      .foto-card {
+        border: 1px solid #ddd;
+        padding: 10px;
+        border-radius: 8px;
+        background: #fff;
+        width: 220px;
+      }
+      .foto-card img {
+        max-width: 100%;
+        border-radius: 5px;
+        height: 150px;
+        object-fit: cover;
+      }
+
+      /* Um pouco de CSS básico para deixarmos apresentável desde já */
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f9;
+        margin: 0;
+        padding: 20px;
+        text-align: center;
+      }
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        color: #333;
+      }
+      .upload-form {
+        margin: 20px 0;
+        padding: 20px;
+        border: 2px dashed #ccc;
+        border-radius: 8px;
+      }
+      input[type="text"],
+      input[type="file"] {
+        margin: 10px 0;
+        padding: 10px;
+        width: 80%;
+      }
+      button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+      .galeria {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 30px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>📸 Minha Galeria de Fotos</h1>
+
+      <div class="upload-form">
+        <h3>Adicionar Nova Foto</h3>
+        <form action="/upload" method="POST" enctype="multipart/form-data">
+          <input
+            type="text"
+            name="titulo"
+            placeholder="Digite o título da foto"
+            required
+          /><br />
+          <input type="file" name="foto" accept="image/*" required /><br />
+          <button type="submit">Fazer Upload</button>
+        </form>
+      </div>
+
+      <hr />
+
+      <h3>Fotos Recentes</h3>
+      <div class="galeria">
+        {% if fotos_para_tela %} {% for foto in fotos_para_tela %}
+        <div class="foto-card">
+          <img
+            src="{{ url_for('static', filename='uploads/' + foto.nome_arquivo) }}"
+            alt="{{ foto.titulo }}"
+          />
+          <h4>{{ foto.titulo }}</h4>
+
+          <form
+            action="{{ url_for('deletar_foto', id=foto.id) }}"
+            method="POST"
+            style="margin-top: 10px"
+          >
+            <button
+              type="submit"
+              style="
+                background-color: #dc3545;
+                padding: 8px 15px;
+                font-size: 14px;
+              "
+            >
+              🗑️ Excluir
+            </button>
+          </form>
+        </div>
+        {% endfor %} {% else %}
+        <p>Nenhuma foto enviada ainda. Seja o primeiro!</p>
+        {% endif %}
+      </div>
+    </div>
+  </body>
+</html>
