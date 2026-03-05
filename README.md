@@ -1,34 +1,34 @@
-# 📸 Galeria de Fotos Full Stack (SaaS Architecture)
+# 📸 Galeria de Fotos Full Stack (SaaS & Advanced Photo Editor)
 
-Este é um projeto Full Stack em Python (Flask) que evoluiu de uma galeria simples para uma arquitetura **Multi-tenant (SaaS)**. O sistema possui autenticação de usuários, isolamento de banco de dados, armazenamento local de arquivos e uma interface premium de alta interatividade.
+Este é um projeto Full Stack em Python (Flask) estruturado como um **SaaS (Software as a Service)**. O sistema possui autenticação de usuários, isolamento de banco de dados e um **Estúdio de Edição de Imagens Profissional** embutido, capaz de processar pixels em tempo real diretamente no navegador.
 
 ## 🚀 Funcionalidades da Aplicação
 
-- **Autenticação e Segurança:** Sistema completo de Login e Cadastro de usuários utilizando `Flask-Login`. As senhas são protegidas com hash criptográfico via `Werkzeug Security`.
-- **Arquitetura Multi-tenant:** Rotas protegidas (`@login_required`) e isolamento de dados no MySQL. Cada usuário tem acesso exclusivo apenas às fotos que ele mesmo enviou (através de Foreign Keys).
-- **Upload via Drag and Drop:** Área interativa para envio de arquivos arrastando e soltando, com validação de segurança (`secure_filename`).
-- **Leitura de Dados e Visualização Avançada:** Exibição dinâmica usando Jinja2 e um visualizador em tela cheia (Modal/Lightbox) sem recarregamento de página.
-- **Edição e Exclusão com Validação:** Permite renomear títulos e excluir fotos com segurança. A exclusão remove a linha no banco e também o arquivo físico do servidor, evitando acúmulo de lixo.
-- **Notificações Flutuantes (Toasts):** Alertas visuais animados e auto-destrutivos que informam o sucesso ou erro das ações do usuário.
-- **Interface Premium (UI/UX):** Design responsivo com grid Masonry, paleta de cores moderna (variáveis CSS), sombras difusas e tipografia Inter (Google Fonts).
+- **Estúdio de Edição (Motor Canvas):** Interface de edição inspirada no Lightroom (Dark Mode). Processamento matemático de imagem no lado do cliente utilizando HTML5 `<canvas>`.
+- **Manipulação de Pixels:** Algoritmos de luminância para ajustes finos de Exposição, Contraste, Realces (Highlights), Sombras, Brancos e Pretos.
+- **Processamento Backend Seguro:** Recepção assíncrona da imagem editada via Base64. O Flask decodifica, gera um hash único (`uuid`) para evitar cache do navegador, salva o novo arquivo físico e deleta a versão anterior para economizar armazenamento.
+- **Autenticação e Segurança (SaaS):** Login e Cadastro de usuários utilizando `Flask-Login` e proteção de senhas com `Werkzeug Security`.
+- **Arquitetura Multi-tenant:** Rotas trancadas (`@login_required`) e isolamento no MySQL (Foreign Keys). Usuários interagem estritamente com seus próprios arquivos.
+- **Upload via Drag and Drop:** Área interativa para envio de arquivos físicos arrastando e soltando.
+- **Interface Premium (UI/UX):** Design responsivo com grid Masonry, notificações flutuantes (Toasts auto-destrutivos), Lightbox (Modal para tela cheia) e tipografia Inter.
 
 ## 🛠️ Tecnologias Utilizadas
 
-- **Backend:** Python 3, Flask, Flask-Login, Werkzeug
+- **Backend:** Python 3, Flask, Flask-Login, Werkzeug, UUID, Base64
 - **Banco de Dados:** MySQL, PyMySQL
-- **Frontend:** HTML5, CSS3, JavaScript (Vanilla), Jinja2
+- **Frontend:** HTML5 Canvas (Image Processing), CSS3 (Variáveis & Dark Theme), JavaScript (Vanilla), Jinja2
 
 ## ⚙️ Como Rodar o Projeto Localmente
 
 ### 1. Preparando o Banco de Dados
 
-Certifique-se de ter um servidor MySQL rodando. Execute o script abaixo para criar as tabelas e o relacionamento estrutural:
+Certifique-se de ter um servidor MySQL rodando. Execute o script abaixo para criar as tabelas e a estrutura de relacionamento (Multi-tenant):
 
 ```sql
 CREATE DATABASE galeria_db;
 USE galeria_db;
 
--- Tabela de Usuários (Clientes)
+-- Tabela de Usuários
 CREATE TABLE usuarios (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
@@ -37,7 +37,7 @@ CREATE TABLE usuarios (
     data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Tabela de Fotos com vínculo ao Usuário Dono (Foreign Key)
+-- Tabela de Fotos (Relacionada ao Usuário)
 CREATE TABLE fotos (
     id INT AUTO_INCREMENT PRIMARY KEY,
     titulo VARCHAR(100) NOT NULL,
@@ -64,11 +64,11 @@ venv\Scripts\activate  # No Linux/Mac use: source venv/bin/activate
 pip install Flask PyMySQL Werkzeug Flask-Login
 ```
 
-_(Nota: Lembre-se de atualizar o `SEU_USUARIO` na URL acima pelo seu username real)._
+_(Nota: Lembre-se de atualizar o `SEU_USUARIO` na URL acima pelo seu username real no GitHub)._
 
 ### 3. Rodando o Servidor
 
-Com o banco configurado e as dependências instaladas, inicie a aplicação:
+Inicie a aplicação:
 
 ```bash
 python app.py

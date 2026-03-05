@@ -3,6 +3,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 import pymysql
 import os
+import base64
+import uuid
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
@@ -165,23 +167,51 @@ def editar_foto(id):
     conexao = conectar_banco()
     cursor = conexao.cursor(pymysql.cursors.DictCursor)
     
-    if request.method == 'POST':
-        novo_titulo = request.form['titulo']
-        # Só permite editar se a foto for do usuário
-        cursor.execute("UPDATE fotos SET titulo = %s WHERE id = %s AND usuario_id = %s", (novo_titulo, id, current_user.id))
-        conexao.commit()
-        conexao.close()
-        flash('Título atualizado com sucesso!')
-        return redirect(url_for('index'))
-        
+    # 1. Busca a foto atual para sabermos o nome do arquivo original
     cursor.execute("SELECT * FROM fotos WHERE id = %s AND usuario_id = %s", (id, current_user.id))
     foto_db = cursor.fetchone()
-    conexao.close()
     
     if not foto_db:
         flash('Foto não encontrada ou você não tem permissão para editá-la.')
+        conexao.close()
+        return redirect(url_for('index'))
+
+    if request.method == 'POST':
+        novo_titulo = request.form['titulo']
+        imagem_base64 = request.form.get('imagem_base64')
+        nome_arquivo_atual = foto_db['nome_arquivo']
+        
+        # 2. Verifica se veio uma imagem editada do Canvas (se o Base64 não está vazio)
+        if imagem_base64 and ',' in imagem_base64:
+            # Separa o cabeçalho "data:image/jpeg;base64," do código da imagem em si
+            cabecalho, codigo_imagem = imagem_base64.split(',', 1)
+            
+            # Gera um novo nome para evitar que o navegador mostre a imagem velha (Cache)
+            novo_nome = f"editada_{uuid.uuid4().hex}.jpg"
+            caminho_novo = os.path.join(app.config['UPLOAD_FOLDER'], novo_nome)
+            caminho_antigo = os.path.join(app.config['UPLOAD_FOLDER'], nome_arquivo_atual)
+            
+            # Decodifica e salva o novo arquivo físico
+            with open(caminho_novo, "wb") as arquivo:
+                arquivo.write(base64.b64decode(codigo_imagem))
+                
+            # Apaga o arquivo antigo do servidor para economizar espaço
+            if os.path.exists(caminho_antigo):
+                os.remove(caminho_antigo)
+                
+            # Atualiza a variável para salvar o novo nome no banco de dados
+            nome_arquivo_atual = novo_nome
+
+        # 3. Atualiza o banco de dados (título e o novo nome do arquivo, se houver)
+        cursor.execute("UPDATE fotos SET titulo = %s, nome_arquivo = %s WHERE id = %s AND usuario_id = %s", 
+                       (novo_titulo, nome_arquivo_atual, id, current_user.id))
+        conexao.commit()
+        conexao.close()
+        
+        flash('Foto editada e salva com sucesso!')
         return redirect(url_for('index'))
         
+    conexao.close()
     return render_template('editar.html', foto=foto_db)
 
 @app.route('/deletar/<int:id>', methods=['POST'])

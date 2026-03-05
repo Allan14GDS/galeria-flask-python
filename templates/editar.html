@@ -1,55 +1,461 @@
 <!doctype html>
-<html lang="pt-br">
+<html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Editar Foto</title>
+    <title>Estúdio Pro - Galeria</title>
     <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
-      href="{{ url_for('static', filename='style.css') }}"
     />
+    <style>
+      :root {
+        --bg-app: #121212;
+        --bg-panel: #252525;
+        --text-main: #e0e0e0;
+        --text-muted: #9e9e9e;
+        --primary: #3b82f6;
+        --track-color: #555555;
+      }
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: var(--bg-app);
+        margin: 0;
+        padding: 40px 20px;
+        color: var(--text-main);
+      }
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+      }
+      .btn-voltar {
+        text-decoration: none;
+        color: var(--text-main);
+        font-weight: 500;
+        padding: 8px 16px;
+        background: var(--bg-panel);
+        border-radius: 6px;
+        transition: 0.2s;
+        font-size: 0.9rem;
+      }
+      .btn-voltar:hover {
+        background: #333;
+      }
+      .header h2 {
+        margin: 0;
+        font-size: 1.2rem;
+        font-weight: 600;
+        letter-spacing: 1px;
+        color: #fff;
+      }
+
+      .studio-grid {
+        display: grid;
+        grid-template-columns: 1fr 320px;
+        gap: 40px;
+        align-items: start;
+      }
+      @media (max-width: 900px) {
+        .studio-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .preview-area {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: #000;
+        padding: 20px;
+        border-radius: 8px;
+        min-height: 60vh;
+        box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+      }
+      .preview-area img {
+        max-width: 100%;
+        max-height: 75vh;
+        object-fit: contain;
+      }
+
+      .controls-area {
+        background: var(--bg-panel);
+        padding: 24px;
+        border-radius: 8px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      }
+      .painel-titulo {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--text-muted);
+        margin-bottom: 20px;
+        border-bottom: 1px solid #333;
+        padding-bottom: 8px;
+      }
+
+      .lr-control {
+        margin-bottom: 20px;
+      }
+      .lr-header {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.85rem;
+        font-weight: 500;
+        margin-bottom: 12px;
+      }
+
+      input[type="range"] {
+        -webkit-appearance: none;
+        width: 100%;
+        background: transparent;
+      }
+      input[type="range"]:focus {
+        outline: none;
+      }
+      input[type="range"]::-webkit-slider-runnable-track {
+        width: 100%;
+        height: 2px;
+        cursor: pointer;
+        background: var(--track-color);
+        border-radius: 1px;
+      }
+      input[type="range"]::-webkit-slider-thumb {
+        height: 16px;
+        width: 16px;
+        border-radius: 50%;
+        background: #ffffff;
+        cursor: pointer;
+        -webkit-appearance: none;
+        margin-top: -7px;
+        box-shadow:
+          0 0 0 2px var(--bg-panel),
+          0 0 0 3px #888;
+        transition: transform 0.1s;
+      }
+      input[type="range"]::-webkit-slider-thumb:hover {
+        transform: scale(1.2);
+      }
+
+      .form-group {
+        margin-top: 30px;
+        margin-bottom: 20px;
+        padding-top: 20px;
+        border-top: 1px solid #333;
+      }
+      .form-group label {
+        display: block;
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        margin-bottom: 8px;
+      }
+      .form-group input[type="text"] {
+        width: 100%;
+        padding: 10px;
+        background: #1a1a1a;
+        border: 1px solid #333;
+        color: white;
+        border-radius: 6px;
+        font-family: "Inter";
+        box-sizing: border-box;
+      }
+      .form-group input[type="text"]:focus {
+        outline: none;
+        border-color: var(--primary);
+      }
+
+      .botoes-acao {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+      }
+      .btn {
+        flex: 1;
+        padding: 10px;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        text-align: center;
+        border: none;
+        font-size: 0.9rem;
+        transition: 0.2s;
+      }
+      .btn-salvar {
+        background-color: var(--primary);
+        color: white;
+      }
+      .btn-salvar:hover {
+        background-color: #2563eb;
+      }
+      .btn-resetar {
+        background-color: transparent;
+        border: 1px solid #555;
+        color: #ccc;
+      }
+      .btn-resetar:hover {
+        background-color: #333;
+        color: white;
+      }
+    </style>
   </head>
   <body>
     <div class="container">
-      <h1>✏️ Editar Título da Foto</h1>
-
-      <div style="text-align: center; margin-bottom: 20px">
-        <img
-          src="{{ url_for('static', filename='uploads/' + foto.nome_arquivo) }}"
-          alt="Foto"
-          width="200"
-        />
+      <div class="header">
+        <a href="{{ url_for('index') }}" class="btn-voltar">← Cancelar</a>
+        <h2>MODO REVELAÇÃO</h2>
+        <div style="width: 90px"></div>
       </div>
 
-      <form action="{{ url_for('editar_foto', id=foto.id) }}" method="POST">
-        <label for="titulo">Novo Título:</label>
-        <input
-          type="text"
-          name="titulo"
-          id="titulo"
-          value="{{ foto.titulo }}"
-          required
-        />
-
-        <div style="margin-top: 20px; display: flex; gap: 10px">
-          <button type="submit" style="background-color: #28a745; width: 50%">
-            💾 Salvar Alteração
-          </button>
-          <a
-            href="{{ url_for('index') }}"
-            style="
-              background-color: #6c757d;
-              color: white;
-              text-align: center;
-              text-decoration: none;
-              padding: 10px;
-              width: 50%;
-              border-radius: 5px;
-            "
-            >Cancelar</a
-          >
+      <div class="studio-grid">
+        <div class="preview-area">
+          <img
+            id="imagemPreview"
+            src="{{ url_for('static', filename='uploads/' + foto.nome_arquivo) }}"
+            alt="{{ foto.titulo }}"
+            crossorigin="anonymous"
+          />
         </div>
-      </form>
+
+        <div class="controls-area">
+          <div class="painel-titulo">Luz & Cor (Motor Canvas)</div>
+
+          <div class="lr-control">
+            <div class="lr-header">
+              <span>Exposição</span> <span id="valExposicao">0.00</span>
+            </div>
+            <input
+              type="range"
+              id="exposicao"
+              min="-5"
+              max="5"
+              step="0.1"
+              value="0"
+            />
+          </div>
+          <div class="lr-control">
+            <div class="lr-header">
+              <span>Contraste</span> <span id="valContraste">0</span>
+            </div>
+            <input type="range" id="contraste" min="-100" max="100" value="0" />
+          </div>
+          <div class="lr-control">
+            <div class="lr-header">
+              <span>Realces</span> <span id="valRealces">0</span>
+            </div>
+            <input type="range" id="realces" min="-100" max="100" value="0" />
+          </div>
+          <div class="lr-control">
+            <div class="lr-header">
+              <span>Sombras</span> <span id="valSombras">0</span>
+            </div>
+            <input type="range" id="sombras" min="-100" max="100" value="0" />
+          </div>
+          <div class="lr-control">
+            <div class="lr-header">
+              <span>Brancos</span> <span id="valBrancos">0</span>
+            </div>
+            <input type="range" id="brancos" min="-100" max="100" value="0" />
+          </div>
+          <div class="lr-control">
+            <div class="lr-header">
+              <span>Pretos</span> <span id="valPretos">0</span>
+            </div>
+            <input type="range" id="pretos" min="-100" max="100" value="0" />
+          </div>
+
+          <form
+            action="{{ url_for('editar_foto', id=foto.id) }}"
+            method="POST"
+            id="formEdicao"
+          >
+            <input type="hidden" name="imagem_base64" id="imagem_base64" />
+
+            <div class="form-group">
+              <label>NOME DO ARQUIVO</label>
+              <input
+                type="text"
+                name="titulo"
+                value="{{ foto.titulo }}"
+                required
+              />
+            </div>
+
+            <div class="botoes-acao">
+              <button
+                type="button"
+                class="btn btn-resetar"
+                onclick="resetarFiltros()"
+              >
+                Resetar
+              </button>
+              <button type="submit" class="btn btn-salvar">Salvar Foto</button>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
+
+    <script>
+      const imagem = document.getElementById("imagemPreview");
+      const inputBase64 = document.getElementById("imagem_base64");
+
+      const inExposicao = document.getElementById("exposicao");
+      const inContraste = document.getElementById("contraste");
+      const inRealces = document.getElementById("realces");
+      const inSombras = document.getElementById("sombras");
+      const inBrancos = document.getElementById("brancos");
+      const inPretos = document.getElementById("pretos");
+
+      const txtExposicao = document.getElementById("valExposicao");
+      const txtContraste = document.getElementById("valContraste");
+      const txtRealces = document.getElementById("valRealces");
+      const txtSombras = document.getElementById("valSombras");
+      const txtBrancos = document.getElementById("valBrancos");
+      const txtPretos = document.getElementById("valPretos");
+
+      // --- MOTOR CANVAS ---
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d", { willReadFrequently: true });
+      let originalPixels = null;
+      let imgOriginal = new Image();
+
+      // Carrega a imagem original na memória uma única vez ao abrir a tela
+      imgOriginal.crossOrigin = "Anonymous";
+      imgOriginal.onload = function () {
+        canvas.width = imgOriginal.width;
+        canvas.height = imgOriginal.height;
+        ctx.drawImage(imgOriginal, 0, 0);
+        originalPixels = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      };
+      imgOriginal.src = imagem.src;
+
+      function formatar(num, isExp = false) {
+        if (num > 0) return "+" + (isExp ? num.toFixed(2) : num);
+        if (num == 0) return isExp ? "0.00" : "0";
+        return isExp ? num.toFixed(2) : num;
+      }
+
+      // A Mágica Matemática
+      function processarImagem() {
+        if (!originalPixels) return;
+
+        txtExposicao.innerText = formatar(parseFloat(inExposicao.value), true);
+        txtContraste.innerText = formatar(parseInt(inContraste.value));
+        txtRealces.innerText = formatar(parseInt(inRealces.value));
+        txtSombras.innerText = formatar(parseInt(inSombras.value));
+        txtBrancos.innerText = formatar(parseInt(inBrancos.value));
+        txtPretos.innerText = formatar(parseInt(inPretos.value));
+
+        // Cria uma cópia fresca dos pixels originais para não estragar a foto base
+        const imgData = new ImageData(
+          new Uint8ClampedArray(originalPixels.data),
+          originalPixels.width,
+          originalPixels.height,
+        );
+        const data = imgData.data;
+
+        const exp = parseFloat(inExposicao.value);
+        const cont = parseInt(inContraste.value);
+        const hl = parseInt(inRealces.value);
+        const sh = parseInt(inSombras.value);
+        const wh = parseInt(inBrancos.value);
+        const bl = parseInt(inPretos.value);
+
+        const contrastFactor = (259 * (cont + 255)) / (255 * (259 - cont));
+        const expMult = Math.pow(2, exp);
+
+        // Varre todos os pixels da imagem (milhões de iterações em milissegundos)
+        for (let i = 0; i < data.length; i += 4) {
+          let r = data[i];
+          let g = data[i + 1];
+          let b = data[i + 2];
+
+          // Exposição
+          r *= expMult;
+          g *= expMult;
+          b *= expMult;
+
+          // Contraste
+          r = contrastFactor * (r - 128) + 128;
+          g = contrastFactor * (g - 128) + 128;
+          b = contrastFactor * (b - 128) + 128;
+
+          // Luminância para isolar altas luzes e sombras
+          let lum = 0.299 * r + 0.587 * g + 0.114 * b;
+
+          // Realces (Afeta apenas pixels claros)
+          if (lum > 128) {
+            let adj = hl * ((lum - 128) / 127);
+            r += adj;
+            g += adj;
+            b += adj;
+          }
+          // Sombras (Afeta apenas pixels escuros)
+          if (lum <= 128) {
+            let adj = sh * ((128 - lum) / 128);
+            r += adj;
+            g += adj;
+            b += adj;
+          }
+          // Brancos e Pretos puros
+          if (lum > 200) {
+            let adj = wh * ((lum - 200) / 55);
+            r += adj;
+            g += adj;
+            b += adj;
+          }
+          if (lum < 55) {
+            let adj = bl * ((55 - lum) / 55);
+            r += adj;
+            g += adj;
+            b += adj;
+          }
+
+          data[i] = r;
+          data[i + 1] = g;
+          data[i + 2] = b;
+        }
+
+        // Pinta a tela invisível com a nova imagem e converte para arquivo
+        ctx.putImageData(imgData, 0, 0);
+        const imagemEditadaBase64 = canvas.toDataURL("image/jpeg", 0.9);
+
+        // Exibe na tela e guarda no formulário para o Python
+        imagem.src = imagemEditadaBase64;
+        inputBase64.value = imagemEditadaBase64;
+      }
+
+      // Sistema de 'Debounce' (Espera você parar de arrastar o mouse para processar, evitando travamentos)
+      let timeoutId;
+      [
+        inExposicao,
+        inContraste,
+        inRealces,
+        inSombras,
+        inBrancos,
+        inPretos,
+      ].forEach((slider) => {
+        slider.addEventListener("input", () => {
+          clearTimeout(timeoutId);
+          timeoutId = setTimeout(processarImagem, 50); // Processa 50ms após soltar
+        });
+      });
+
+      function resetarFiltros() {
+        inExposicao.value = 0;
+        inContraste.value = 0;
+        inRealces.value = 0;
+        inSombras.value = 0;
+        inBrancos.value = 0;
+        inPretos.value = 0;
+        processarImagem();
+      }
+    </script>
   </body>
 </html>
