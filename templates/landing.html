@@ -1,0 +1,631 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Galeria Pro - Edição Profissional</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        font-family: "Inter", sans-serif;
+        overflow: hidden;
+        background-color: #000;
+      }
+
+      .hero-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url("{{ url_for('static', filename='bg-montanha.jpg') }}")
+          no-repeat center center;
+        background-size: cover;
+        z-index: 1;
+      }
+      .overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          to right,
+          rgba(0, 0, 0, 0.85) 0%,
+          rgba(0, 0, 0, 0.3) 50%,
+          rgba(0, 0, 0, 0.5) 100%
+        );
+        z-index: 2;
+      }
+      .content {
+        position: relative;
+        z-index: 3;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* --- NAVBAR --- */
+      .navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 30px 60px;
+      }
+      .logo {
+        color: white;
+        font-size: 1.5rem;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        letter-spacing: -0.5px;
+      }
+      .nav-links {
+        display: flex;
+        gap: 30px;
+      }
+      .nav-links a {
+        color: #ccc;
+        text-decoration: none;
+        font-size: 0.95rem;
+        font-weight: 500;
+        transition: 0.2s;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+      .nav-links a:hover {
+        color: white;
+      }
+
+      .nav-buttons {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+      }
+      .btn {
+        padding: 12px 24px;
+        border-radius: 50px;
+        font-weight: 600;
+        text-decoration: none;
+        font-size: 0.95rem;
+        transition: 0.3s;
+        cursor: pointer;
+      }
+      .btn-login {
+        color: white;
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+      }
+      .btn-login:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: white;
+      }
+      .btn-cta {
+        background: white;
+        color: black;
+        border: none;
+      }
+      .btn-cta:hover {
+        background: #e0e0e0;
+        transform: scale(1.05);
+      }
+
+      /* --- CORPO PRINCIPAL --- */
+      .hero-main {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex: 1;
+        padding: 0 80px;
+      }
+
+      .hero-text {
+        max-width: 650px;
+        color: white;
+      }
+      .hero-text h1 {
+        font-size: 4.5rem;
+        font-weight: 800;
+        line-height: 1.05;
+        margin: 0 0 20px 0;
+        letter-spacing: -2px;
+      }
+      .hero-text p {
+        font-size: 1.25rem;
+        color: #ccc;
+        margin: 0 0 40px 0;
+        line-height: 1.6;
+        font-weight: 400;
+      }
+
+      .hero-actions {
+        display: flex;
+        gap: 20px;
+      }
+      .btn-primary-large {
+        background: #3b82f6;
+        color: white;
+        padding: 18px 40px;
+        border-radius: 50px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: 0.3s;
+        box-shadow: 0 10px 20px rgba(59, 130, 246, 0.4);
+      }
+      .btn-primary-large:hover {
+        background: #2563eb;
+        transform: translateY(-3px);
+        box-shadow: 0 15px 25px rgba(59, 130, 246, 0.5);
+      }
+      .btn-outline-large {
+        background: transparent;
+        color: white;
+        border: 2px solid rgba(255, 255, 255, 0.5);
+        padding: 18px 40px;
+        border-radius: 50px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: 0.3s;
+      }
+      .btn-outline-large:hover {
+        border-color: white;
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      /* --- PAINEL DE VIDRO (Mockup interativo) --- */
+      .glass-panel {
+        background: rgba(5, 5, 5, 0.9);
+        backdrop-filter: blur(2px);
+        -webkit-backdrop-filter: blur(2px);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        border-radius: 16px;
+        padding: 45px;
+        width: 420px;
+        box-shadow: 0 40px 80px rgba(0, 0, 0, 0.9);
+        transform: rotate(-1deg);
+        transition: 0.4s;
+        box-sizing: border-box;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+      .glass-panel:hover {
+        transform: rotate(0deg) scale(1.02);
+        border-color: rgba(255, 255, 255, 0.5);
+      }
+      .lr-control {
+        margin-bottom: 28px;
+      }
+      .lr-header {
+        display: flex;
+        justify-content: space-between;
+        font-size: 1rem;
+        font-weight: 600;
+        margin-bottom: 14px;
+        color: #fff;
+      }
+      input[type="range"] {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 100%;
+        background: transparent;
+        cursor: pointer;
+      }
+      input[type="range"]:focus {
+        outline: none;
+      }
+      input[type="range"]::-webkit-slider-runnable-track {
+        width: 100%;
+        height: 4px;
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 2px;
+      }
+      input[type="range"]::-webkit-slider-thumb {
+        height: 22px;
+        width: 22px;
+        border-radius: 50%;
+        background: #fff;
+        -webkit-appearance: none;
+        margin-top: -9px;
+        box-shadow: 0 0 0 5px rgba(0, 0, 0, 0.4);
+        transition: 0.2s;
+      }
+      input[type="range"]::-webkit-slider-thumb:hover {
+        transform: scale(1.2);
+      }
+      .panel-footer {
+        font-size: 0.85rem;
+        color: #aaa;
+        text-align: center;
+        margin-top: 35px;
+        opacity: 0.8;
+      }
+      .seta {
+        position: absolute;
+        right: 420px;
+        top: 220px;
+        color: white;
+        font-family: cursive;
+        font-size: 1.5rem;
+        transform: rotate(-15deg);
+        opacity: 0.8;
+      }
+
+      /* =========================================
+         NOVO: MODAL DE LOGIN ESTILO LIGHTROOM
+         ========================================= */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.85);
+        backdrop-filter: blur(8px);
+        z-index: 9999;
+        display: none;
+        justify-content: center;
+        align-items: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+      .modal-overlay.active {
+        display: flex;
+        opacity: 1;
+      }
+
+      .login-box {
+        background: #0a0a0a;
+        border: 1px solid #333;
+        border-radius: 12px;
+        padding: 40px;
+        width: 100%;
+        max-width: 420px;
+        position: relative;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8);
+        transform: scale(0.95);
+        transition: transform 0.3s ease;
+        color: white;
+        text-align: center;
+        box-sizing: border-box;
+      }
+      .modal-overlay.active .login-box {
+        transform: scale(1);
+      }
+
+      .close-btn {
+        position: absolute;
+        top: 20px;
+        right: 25px;
+        color: #888;
+        font-size: 1.8rem;
+        cursor: pointer;
+        line-height: 1;
+        transition: 0.2s;
+      }
+      .close-btn:hover {
+        color: white;
+      }
+
+      .login-box h2 {
+        margin: 0 0 30px 0;
+        font-size: 1.4rem;
+        font-weight: 600;
+        letter-spacing: -0.5px;
+      }
+
+      .btn-social {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        width: 100%;
+        padding: 14px;
+        border-radius: 50px;
+        border: none;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        margin-bottom: 15px;
+        transition: 0.2s;
+        font-family: "Inter", sans-serif;
+      }
+      .btn-google {
+        background: white;
+        color: black;
+      }
+      .btn-google:hover {
+        background: #e5e5e5;
+      }
+      .btn-facebook {
+        background: white;
+        color: black;
+      }
+      .btn-facebook:hover {
+        background: #e5e5e5;
+      }
+
+      .separator {
+        margin: 25px 0;
+        font-size: 0.85rem;
+        color: #666;
+        display: flex;
+        align-items: center;
+      }
+      .separator::before,
+      .separator::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: #333;
+        margin: 0 15px;
+      }
+
+      .input-dark {
+        width: 100%;
+        padding: 14px 16px;
+        background: #141414;
+        border: 1px solid #333;
+        color: white;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        box-sizing: border-box;
+        margin-bottom: 15px;
+        font-family: "Inter", sans-serif;
+        transition: 0.2s;
+      }
+      .input-dark:focus {
+        outline: none;
+        border-color: #3b82f6;
+        background: #1a1a1a;
+      }
+
+      .btn-submit {
+        background: transparent;
+        color: #3b82f6;
+        border: none;
+        font-weight: 500;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: 0.2s;
+        text-decoration: none;
+        padding: 5px;
+      }
+      .btn-submit:hover {
+        color: #60a5fa;
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="hero-bg"></div>
+    <div class="overlay"></div>
+
+    <div class="content">
+      <nav class="navbar">
+        <div class="logo">
+          <svg
+            width="28"
+            height="28"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#3b82f6"
+            stroke-width="2.5"
+          >
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+            <polyline points="21 15 16 10 5 21"></polyline>
+          </svg>
+          Galeria Pro
+        </div>
+        <div class="nav-links">
+          <a href="#">Início</a>
+          <a href="#">Projetos</a>
+          <a href="#">Comunidade</a>
+          <a href="#">Sobre</a>
+        </div>
+        <div class="nav-buttons">
+          <button onclick="abrirModalLogin()" class="btn btn-login">
+            Fazer logon
+          </button>
+          <a href="{{ url_for('cadastro') }}" class="btn btn-cta"
+            >Comece grátis</a
+          >
+        </div>
+      </nav>
+
+      <main class="hero-main">
+        <div class="hero-text">
+          <h1>Edição de fotos online potente e precisa.</h1>
+          <p>
+            Gerencie, edite e organize suas memórias com a força do nosso motor
+            de renderização em tempo real, diretamente do seu navegador.
+          </p>
+          <div class="hero-actions">
+            <a href="{{ url_for('cadastro') }}" class="btn-primary-large"
+              >Começar agora</a
+            >
+            <a href="#saibamais" class="btn-outline-large">Saiba mais</a>
+          </div>
+        </div>
+
+        <div class="seta">Experimente! ⤵</div>
+
+        <div class="glass-panel">
+          <div class="lr-control">
+            <div class="lr-header">
+              <span>Exposição</span> <span id="valExp">+1.11</span>
+            </div>
+            <input
+              type="range"
+              id="slExp"
+              min="-5"
+              max="5"
+              step="0.01"
+              value="1.11"
+            />
+          </div>
+          <div class="lr-control">
+            <div class="lr-header">
+              <span>Contraste</span> <span id="valCont">+54</span>
+            </div>
+            <input type="range" id="slCont" min="-100" max="100" value="54" />
+          </div>
+          <div class="lr-control">
+            <div class="lr-header">
+              <span>Realces</span> <span id="valReal">-12</span>
+            </div>
+            <input type="range" id="slReal" min="-100" max="100" value="-12" />
+          </div>
+          <div class="lr-control">
+            <div class="lr-header">
+              <span>Sombras</span> <span id="valSom">+8</span>
+            </div>
+            <input type="range" id="slSom" min="-100" max="100" value="8" />
+          </div>
+          <div class="lr-control">
+            <div class="lr-header">
+              <span>Brancos</span> <span id="valBra">0</span>
+            </div>
+            <input type="range" id="slBra" min="-100" max="100" value="0" />
+          </div>
+          <div class="lr-control">
+            <div class="lr-header">
+              <span>Pretos</span> <span id="valPre">-5</span>
+            </div>
+            <input type="range" id="slPre" min="-100" max="100" value="-5" />
+          </div>
+          <div class="panel-footer">
+            Motor de renderização exclusivo Galeria Pro
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <div class="modal-overlay" id="modalLogin">
+      <div class="login-box">
+        <span class="close-btn" onclick="fecharModalLogin()">&times;</span>
+        <h2>Fazer logon ou criar uma conta</h2>
+
+        <button
+          type="button"
+          class="btn-social btn-google"
+          onclick="alert('Integração com Google em breve!')"
+        >
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            style="color: #ea4335"
+          >
+            <path
+              d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+            />
+            <path
+              d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+              fill="#34a853"
+            />
+            <path
+              d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+              fill="#fbbc05"
+            />
+            <path
+              d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+              fill="#ea4335"
+            />
+          </svg>
+          Continuar com Google
+        </button>
+        <button
+          type="button"
+          class="btn-social btn-facebook"
+          onclick="alert('Integração com Facebook em breve!')"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="#1877F2">
+            <path
+              d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"
+            />
+          </svg>
+          Continuar com Facebook
+        </button>
+
+        <div class="separator"><span>Continue com o e-mail</span></div>
+
+        <form action="{{ url_for('login') }}" method="POST">
+          <input
+            type="email"
+            name="email"
+            class="input-dark"
+            placeholder="E-mail corporativo ou pessoal"
+            required
+          />
+          <input
+            type="password"
+            name="senha"
+            class="input-dark"
+            placeholder="Sua senha"
+            required
+          />
+          <div style="margin-top: 5px">
+            <button type="submit" class="btn-submit">Fazer logon</button>
+            <span style="color: #444; margin: 0 10px">ou</span>
+            <a href="{{ url_for('cadastro') }}" class="btn-submit"
+              >crie uma conta</a
+            >
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      // Função Modal
+      function abrirModalLogin() {
+        document.getElementById("modalLogin").classList.add("active");
+      }
+      function fecharModalLogin() {
+        document.getElementById("modalLogin").classList.remove("active");
+      }
+
+      // Fechar clicando fora da caixa
+      document
+        .getElementById("modalLogin")
+        .addEventListener("click", function (e) {
+          if (e.target === this) fecharModalLogin();
+        });
+
+      // Motor do Mockup
+      function formatarMockup(num, isExp = false) {
+        if (num > 0) return "+" + (isExp ? num.toFixed(2) : num);
+        if (num == 0) return isExp ? "0.00" : "0";
+        return isExp ? num.toFixed(2) : num;
+      }
+      const controles = [
+        { sl: "slExp", val: "valExp", isExp: true },
+        { sl: "slCont", val: "valCont", isExp: false },
+        { sl: "slReal", val: "valReal", isExp: false },
+        { sl: "slSom", val: "valSom", isExp: false },
+        { sl: "slBra", val: "valBra", isExp: false },
+        { sl: "slPre", val: "valPre", isExp: false },
+      ];
+      controles.forEach((ctrl) => {
+        document.getElementById(ctrl.sl).addEventListener("input", (e) => {
+          document.getElementById(ctrl.val).innerText = formatarMockup(
+            parseFloat(e.target.value),
+            ctrl.isExp,
+          );
+        });
+      });
+    </script>
+  </body>
+</html>

@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Galeria Pro</title>
+    <title>Meu Estúdio - Galeria Pro</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -13,100 +13,123 @@
     />
 
     <style>
-      /* --- Base e Variáveis --- */
+      /* --- TEMA ESCURO PROFISSIONAL (Estilo Adobe) --- */
       :root {
-        --primary: #4f46e5;
-        --primary-hover: #4338ca;
+        --bg-app: #0a0a0a; /* Fundo super escuro */
+        --bg-panel: #141414; /* Fundo dos painéis um pouco mais claro */
+        --border-color: #27272a; /* Bordas sutis */
+        --primary: #3b82f6; /* Azul profissional */
+        --primary-hover: #2563eb;
         --danger: #ef4444;
-        --warning: #f59e0b;
+        --danger-hover: #dc2626;
         --success: #10b981;
-        --bg-color: #f9fafb;
-        --card-bg: #ffffff;
-        --text-main: #111827;
-        --text-muted: #6b7280;
+        --text-main: #f4f4f5; /* Branco off-white para não cansar a vista */
+        --text-muted: #a1a1aa;
       }
 
       body {
         font-family: "Inter", sans-serif;
-        background-color: var(--bg-color);
+        background-color: var(--bg-app);
         color: var(--text-main);
         margin: 0;
-        padding: 40px 20px;
+        padding: 0;
+        min-height: 100vh;
       }
 
-      .container {
-        max-width: 1200px;
-        margin: 0 auto;
-      }
-
-      /* --- Barra de Navegação do Usuário --- */
+      /* --- NAVBAR PREMIUM --- */
       .navbar {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        background: var(--card-bg);
-        padding: 16px 24px;
-        border-radius: 12px;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-        margin-bottom: 30px;
+        background-color: rgba(10, 10, 10, 0.8);
+        backdrop-filter: blur(12px);
+        padding: 16px 40px;
+        border-bottom: 1px solid var(--border-color);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-weight: 700;
+        font-size: 1.25rem;
+        letter-spacing: -0.5px;
+      }
+      .brand svg {
+        color: var(--primary);
       }
       .user-greeting {
-        font-weight: 600;
-        color: var(--text-main);
-        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        font-weight: 500;
+        color: var(--text-muted);
+        font-size: 0.95rem;
       }
       .btn-logout {
-        background-color: var(--danger);
-        color: white;
-        padding: 10px 20px;
-        border-radius: 8px;
+        background-color: transparent;
+        color: var(--text-main);
+        border: 1px solid var(--border-color);
+        padding: 8px 16px;
+        border-radius: 6px;
         text-decoration: none;
-        font-weight: 600;
-        font-size: 0.9rem;
+        font-weight: 500;
+        font-size: 0.85rem;
         transition: 0.2s;
       }
       .btn-logout:hover {
-        opacity: 0.85;
+        background-color: #27272a;
+        color: white;
       }
 
-      .header-title {
-        text-align: center;
-        font-size: 2.5rem;
-        font-weight: 800;
-        letter-spacing: -0.025em;
-        margin-bottom: 40px;
-      }
-      .header-title span {
-        color: var(--primary);
+      .container {
+        max-width: 1400px;
+        margin: 40px auto;
+        padding: 0 40px;
       }
 
-      /* --- Upload Section --- */
+      /* --- ÁREA DE UPLOAD (DROPZONE) --- */
       .upload-section {
-        background: var(--card-bg);
-        padding: 30px;
-        border-radius: 16px;
-        box-shadow:
-          0 4px 6px -1px rgba(0, 0, 0, 0.05),
-          0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        background: var(--bg-panel);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 40px;
         margin-bottom: 50px;
-      }
-      .upload-section h3 {
-        margin-top: 0;
-        text-align: center;
-        font-size: 1.25rem;
-        margin-bottom: 24px;
-      }
-      .upload-form-grid {
         display: flex;
         flex-direction: column;
-        gap: 16px;
-        max-width: 500px;
-        margin: 0 auto;
+        align-items: center;
       }
+      .upload-header {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+      .upload-header h2 {
+        margin: 0 0 8px 0;
+        font-size: 1.5rem;
+        font-weight: 600;
+      }
+      .upload-header p {
+        margin: 0;
+        color: var(--text-muted);
+        font-size: 0.95rem;
+      }
+
+      .upload-form {
+        width: 100%;
+        max-width: 600px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+
       .input-moderno {
         width: 100%;
         padding: 14px 16px;
-        border: 1px solid #d1d5db;
+        background: #18181b;
+        border: 1px solid var(--border-color);
+        color: white;
         border-radius: 8px;
         font-size: 1rem;
         font-family: "Inter", sans-serif;
@@ -116,16 +139,15 @@
       .input-moderno:focus {
         outline: none;
         border-color: var(--primary);
-        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
       }
 
-      /* --- NOVO: Drag and Drop Zone --- */
       .dropzone {
-        border: 2px dashed #d1d5db;
+        border: 2px dashed #3f3f46;
         border-radius: 8px;
-        padding: 30px 20px;
+        padding: 40px 20px;
         text-align: center;
-        background-color: #f9fafb;
+        background-color: #18181b;
         position: relative;
         cursor: pointer;
         transition: all 0.3s ease;
@@ -133,7 +155,7 @@
       .dropzone:hover,
       .dropzone.dragover {
         border-color: var(--primary);
-        background-color: #eff6ff;
+        background-color: rgba(59, 130, 246, 0.05);
       }
       .dropzone-input {
         position: absolute;
@@ -149,14 +171,18 @@
         flex-direction: column;
         align-items: center;
         gap: 12px;
-        pointer-events: none; /* Deixa o clique passar para o input invisível */
+        pointer-events: none;
+      }
+      .dropzone-content svg {
+        color: var(--primary);
       }
       .dropzone-content span {
         color: var(--text-muted);
         font-size: 0.95rem;
       }
       .dropzone-content strong {
-        color: var(--primary);
+        color: white;
+        font-weight: 600;
       }
 
       .btn-moderno {
@@ -173,70 +199,39 @@
         align-items: center;
         justify-content: center;
         gap: 8px;
+        width: 100%;
       }
       .btn-moderno:hover {
         background-color: var(--primary-hover);
         transform: translateY(-1px);
       }
 
-      /* --- Toasts (Notificações Flutuantes) --- */
-      .toast-container {
-        position: fixed;
-        top: 24px;
-        right: 24px;
-        z-index: 9999;
+      /* --- GALERIA GRID --- */
+      .galeria-header {
         display: flex;
-        flex-direction: column;
-        gap: 12px;
-      }
-      .toast {
-        background-color: var(--card-bg);
-        color: var(--text-main);
-        padding: 16px 24px;
-        border-left: 4px solid var(--success);
-        border-radius: 8px;
-        box-shadow:
-          0 10px 15px -3px rgba(0, 0, 0, 0.1),
-          0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        display: flex;
-        align-items: center;
         justify-content: space-between;
-        min-width: 280px;
+        align-items: center;
+        margin-bottom: 24px;
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 16px;
+      }
+      .galeria-header h3 {
+        margin: 0;
+        font-size: 1.2rem;
         font-weight: 500;
-        animation: slideInRight 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        transition:
-          opacity 0.3s ease,
-          transform 0.3s ease;
-      }
-      .toast.hide {
-        opacity: 0;
-        transform: translateX(100%);
-      }
-      .toast-close {
-        cursor: pointer;
         color: var(--text-muted);
-        font-size: 1.25rem;
-        margin-left: 16px;
-        transition: color 0.2s;
-      }
-      .toast-close:hover {
-        color: var(--danger);
-      }
-      @keyframes slideInRight {
-        from {
-          transform: translateX(100%);
-          opacity: 0;
-        }
-        to {
-          transform: translateX(0);
-          opacity: 1;
-        }
+        text-transform: uppercase;
+        letter-spacing: 1px;
       }
 
-      /* --- Galeria Masonry --- */
       .galeria {
-        column-count: 3;
+        column-count: 4;
         column-gap: 24px;
+      }
+      @media (max-width: 1200px) {
+        .galeria {
+          column-count: 3;
+        }
       }
       @media (max-width: 900px) {
         .galeria {
@@ -250,67 +245,127 @@
       }
 
       .foto-card {
-        background: var(--card-bg);
-        border-radius: 16px;
+        background: var(--bg-panel);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
         overflow: hidden;
-        box-shadow:
-          0 10px 15px -3px rgba(0, 0, 0, 0.05),
-          0 4px 6px -2px rgba(0, 0, 0, 0.025);
         break-inside: avoid;
         margin-bottom: 24px;
         transition:
           transform 0.3s ease,
-          box-shadow 0.3s ease;
+          border-color 0.3s ease;
+        position: relative;
       }
       .foto-card:hover {
-        transform: translateY(-8px);
-        box-shadow:
-          0 20px 25px -5px rgba(0, 0, 0, 0.1),
-          0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        transform: translateY(-4px);
+        border-color: #3f3f46;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
       }
+
       .foto-card img {
         width: 100%;
         height: auto;
         display: block;
         cursor: zoom-in;
       }
+
       .foto-info {
-        padding: 20px;
+        padding: 16px;
       }
       .foto-info h4 {
         margin: 0 0 16px 0;
-        font-size: 1.125rem;
-        font-weight: 600;
+        font-size: 1rem;
+        font-weight: 500;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
+
       .botoes-card {
         display: flex;
-        gap: 12px;
+        gap: 8px;
       }
       .btn-acao {
         flex: 1;
-        padding: 10px;
+        padding: 8px;
         border-radius: 6px;
-        font-size: 0.875rem;
-        font-weight: 600;
+        font-size: 0.85rem;
+        font-weight: 500;
         text-align: center;
         text-decoration: none;
         cursor: pointer;
-        border: none;
-        transition: opacity 0.2s;
+        border: 1px solid transparent;
+        transition: 0.2s;
+        background: #18181b;
+        color: var(--text-main);
+        border-color: #3f3f46;
       }
       .btn-acao:hover {
-        opacity: 0.85;
+        background: #27272a;
       }
-      .btn-editar {
-        background-color: var(--warning);
-        color: #fff;
+      .btn-editar:hover {
+        color: var(--primary);
+        border-color: var(--primary);
       }
-      .btn-excluir {
-        background-color: var(--danger);
-        color: white;
+      .btn-excluir:hover {
+        color: var(--danger);
+        border-color: var(--danger);
       }
 
-      /* --- Modal (Lightbox) --- */
+      /* --- TOASTS DARK MODE --- */
+      .toast-container {
+        position: fixed;
+        top: 80px;
+        right: 40px;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .toast {
+        background-color: var(--bg-panel);
+        border: 1px solid var(--border-color);
+        color: white;
+        padding: 16px 24px;
+        border-left: 4px solid var(--primary);
+        border-radius: 8px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-width: 300px;
+        font-weight: 500;
+        animation: slideInRight 0.4s forwards;
+        transition:
+          opacity 0.3s,
+          transform 0.3s;
+      }
+      .toast.hide {
+        opacity: 0;
+        transform: translateX(100%);
+      }
+      .toast-close {
+        cursor: pointer;
+        color: var(--text-muted);
+        font-size: 1.25rem;
+        margin-left: 16px;
+        transition: color 0.2s;
+      }
+      .toast-close:hover {
+        color: white;
+      }
+      @keyframes slideInRight {
+        from {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      /* --- MODAL LIGHTBOX --- */
       .modal {
         display: none;
         position: fixed;
@@ -319,8 +374,8 @@
         top: 0;
         width: 100%;
         height: 100%;
-        background-color: rgba(0, 0, 0, 0.85);
-        backdrop-filter: blur(8px);
+        background-color: rgba(0, 0, 0, 0.9);
+        backdrop-filter: blur(10px);
         overflow: auto;
       }
       .modal-content {
@@ -328,8 +383,8 @@
         display: block;
         max-width: 90%;
         max-height: 80vh;
-        border-radius: 8px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        border-radius: 4px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
         animation: zoomIn 0.3s ease;
         object-fit: contain;
       }
@@ -338,24 +393,24 @@
         display: block;
         width: 80%;
         text-align: center;
-        color: #e5e7eb;
+        color: #a1a1aa;
         padding: 15px 0;
-        font-size: 1.25rem;
-        font-weight: 500;
-        animation: zoomIn 0.3s ease;
+        font-size: 1.1rem;
+        font-weight: 400;
       }
       .fechar-modal {
         position: absolute;
-        top: 20px;
+        top: 30px;
         right: 40px;
-        color: #f3f4f6;
+        color: #a1a1aa;
         font-size: 40px;
-        font-weight: bold;
+        font-weight: 300;
         cursor: pointer;
         transition: 0.2s;
+        line-height: 1;
       }
       .fechar-modal:hover {
-        color: var(--danger);
+        color: white;
       }
       @keyframes zoomIn {
         from {
@@ -367,9 +422,50 @@
           opacity: 1;
         }
       }
+
+      /* Mensagem de Galeria Vazia */
+      .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: var(--text-muted);
+        grid-column: 1 / -1;
+        background: var(--bg-panel);
+        border: 1px dashed #3f3f46;
+        border-radius: 12px;
+      }
+      .empty-state svg {
+        width: 48px;
+        height: 48px;
+        margin-bottom: 16px;
+        opacity: 0.5;
+      }
     </style>
   </head>
   <body>
+    <nav class="navbar">
+      <div class="brand">
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+          <circle cx="8.5" cy="8.5" r="1.5"></circle>
+          <polyline points="21 15 16 10 5 21"></polyline>
+        </svg>
+        Galeria Pro
+      </div>
+      <div class="user-greeting">
+        <span>{{ current_user.nome }}</span>
+        <a href="/logout" class="btn-logout">Sair</a>
+      </div>
+    </nav>
+
     <div class="toast-container" id="toastContainer">
       {% with messages = get_flashed_messages() %} {% if messages %} {% for
       message in messages %}
@@ -381,27 +477,25 @@
     </div>
 
     <div class="container">
-      <div class="navbar">
-        <div class="user-greeting">👋 Olá, {{ current_user.nome }}!</div>
-        <a href="/logout" class="btn-logout">Sair da conta</a>
-      </div>
-
-      <h1 class="header-title">📸 Minha <span>Galeria</span></h1>
-
       <div class="upload-section">
-        <h3>Adicionar Nova Foto</h3>
+        <div class="upload-header">
+          <h2>Adicionar ao Workspace</h2>
+          <p>Faça upload de novas imagens para o seu painel de edição.</p>
+        </div>
+
         <form
           action="/upload"
           method="POST"
           enctype="multipart/form-data"
-          class="upload-form-grid"
+          class="upload-form"
         >
           <input
             type="text"
             name="titulo"
-            placeholder="Digite o título da foto..."
+            placeholder="Nome do projeto ou arquivo..."
             required
             class="input-moderno"
+            autocomplete="off"
           />
 
           <div class="dropzone" id="dropzone">
@@ -418,43 +512,31 @@
                 width="40"
                 height="40"
                 fill="none"
-                stroke="var(--primary)"
+                stroke="currentColor"
                 viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
               >
                 <path
                   stroke-linecap="round"
                   stroke-linejoin="round"
-                  stroke-width="2"
+                  stroke-width="1.5"
                   d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
                 ></path>
               </svg>
               <span id="dropzone-text"
-                >Arraste sua foto aqui ou
-                <strong>clique para buscar</strong></span
+                >Arraste a imagem aqui ou
+                <strong>clique para navegar</strong></span
               >
             </div>
           </div>
 
           <button type="submit" class="btn-moderno">
-            <svg
-              width="20"
-              height="20"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
-              ></path>
-            </svg>
-            Fazer Upload
+            Fazer Upload para o Servidor
           </button>
         </form>
+      </div>
+
+      <div class="galeria-header">
+        <h3>Seus Arquivos Recentes</h3>
       </div>
 
       <div class="galeria">
@@ -464,6 +546,7 @@
             src="{{ url_for('static', filename='uploads/' + foto.nome_arquivo) }}"
             alt="{{ foto.titulo }}"
             onclick="abrirModal(this.src, this.alt)"
+            loading="lazy"
           />
           <div class="foto-info">
             <h4>{{ foto.titulo }}</h4>
@@ -482,9 +565,7 @@
                   type="submit"
                   class="btn-acao btn-excluir"
                   onclick="
-                    return confirm(
-                      'Tem certeza que deseja excluir esta foto? Esta ação não pode ser desfeita.',
-                    );
+                    return confirm('Excluir permanentemente este arquivo?');
                   "
                   style="width: 100%"
                 >
@@ -495,16 +576,20 @@
           </div>
         </div>
         {% endfor %} {% else %}
-        <p
-          style="
-            text-align: center;
-            color: var(--text-muted);
-            font-size: 1.1rem;
-            grid-column: 1 / -1;
-          "
-        >
-          Nenhuma foto enviada ainda. Seu mural está em branco!
-        </p>
+        <div class="empty-state">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+          >
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+            <polyline points="21 15 16 10 5 21"></polyline>
+          </svg>
+          <h2>Nenhum arquivo encontrado</h2>
+          <p>Faça o upload da sua primeira imagem acima para começar.</p>
+        </div>
         {% endif %}
       </div>
     </div>
@@ -516,45 +601,35 @@
     </div>
 
     <script>
-      // --- Lógica do Modal ---
+      // Modal
       const modal = document.getElementById("imageModal");
       const imgModal = document.getElementById("imgModal");
       const captionText = document.getElementById("captionModal");
-
       function abrirModal(src, alt) {
         modal.style.display = "block";
         imgModal.src = src;
         captionText.innerHTML = alt;
         document.body.style.overflow = "hidden";
       }
-
       function fecharModal() {
         modal.style.display = "none";
         document.body.style.overflow = "auto";
       }
-
       modal.addEventListener("click", function (e) {
-        if (e.target !== imgModal && e.target !== captionText) {
-          fecharModal();
-        }
+        if (e.target !== imgModal && e.target !== captionText) fecharModal();
       });
-
       document.addEventListener("keydown", function (e) {
-        if (e.key === "Escape") {
-          fecharModal();
-        }
+        if (e.key === "Escape") fecharModal();
       });
 
-      // --- Lógica dos Toasts Flutuantes ---
+      // Toasts
       function fecharToast(element) {
         const toast = element.parentElement;
         toast.classList.add("hide");
         setTimeout(() => toast.remove(), 300);
       }
-
       document.addEventListener("DOMContentLoaded", () => {
-        const toasts = document.querySelectorAll(".toast");
-        toasts.forEach((toast) => {
+        document.querySelectorAll(".toast").forEach((toast) => {
           setTimeout(() => {
             if (document.body.contains(toast)) {
               toast.classList.add("hide");
@@ -564,22 +639,19 @@
         });
       });
 
-      // --- Lógica do Drag and Drop ---
+      // Drag and Drop
       const dropzone = document.getElementById("dropzone");
       const fotoInput = document.getElementById("fotoInput");
       const dropzoneText = document.getElementById("dropzone-text");
 
-      // 1. Previne o comportamento padrão do navegador
       ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) => {
         dropzone.addEventListener(eventName, preventDefaults, false);
       });
-
       function preventDefaults(e) {
         e.preventDefault();
         e.stopPropagation();
       }
 
-      // 2. Adiciona e remove efeitos visuais ao arrastar
       ["dragenter", "dragover"].forEach((eventName) => {
         dropzone.addEventListener(
           eventName,
@@ -587,7 +659,6 @@
           false,
         );
       });
-
       ["dragleave", "drop"].forEach((eventName) => {
         dropzone.addEventListener(
           eventName,
@@ -596,29 +667,22 @@
         );
       });
 
-      // 3. NOVO: Captura o arquivo quando ele é SOLTO (Drop) na área
       dropzone.addEventListener("drop", function (e) {
         let dt = e.dataTransfer;
         let files = dt.files;
-
         if (files.length > 0) {
-          fotoInput.files = files; // Transfere o arquivo para o input do formulário
-          atualizarTexto(files[0].name); // Atualiza a tela
+          fotoInput.files = files;
+          atualizarTexto(files[0].name);
         }
       });
-
-      // 4. Captura o arquivo quando escolhido pelo CLIQUE tradicional
       fotoInput.addEventListener("change", function () {
-        if (this.files && this.files.length > 0) {
+        if (this.files && this.files.length > 0)
           atualizarTexto(this.files[0].name);
-        } else {
-          dropzoneText.innerHTML = `Arraste sua foto aqui ou <strong>clique para buscar</strong>`;
-        }
+        else
+          dropzoneText.innerHTML = `Arraste a imagem aqui ou <strong>clique para navegar</strong>`;
       });
-
-      // 5. Função auxiliar para mudar a mensagem da caixa
       function atualizarTexto(nomeArquivo) {
-        dropzoneText.innerHTML = `<strong>Arquivo pronto:</strong> ${nomeArquivo}`;
+        dropzoneText.innerHTML = `<strong style="color:var(--primary)">Arquivo carregado:</strong> ${nomeArquivo}`;
       }
     </script>
   </body>

@@ -122,14 +122,19 @@ def logout():
 # ==========================================
 
 @app.route('/')
-@login_required
 def index():
+    # 1. Se o usuário NÃO estiver logado, ele vê a Página Inicial (Vitrine)
+    if not current_user.is_authenticated:
+        return render_template('landing.html')
+        
+    # 2. Se ele já estiver logado, o sistema carrega o Dashboard dele!
     conexao = conectar_banco()
     cursor = conexao.cursor(pymysql.cursors.DictCursor)
     # Traz apenas as fotos que pertencem ao usuário logado no momento
     cursor.execute("SELECT * FROM fotos WHERE usuario_id = %s ORDER BY data_upload DESC", (current_user.id,))
     fotos_db = cursor.fetchall()
     conexao.close()
+    
     return render_template('index.html', fotos_para_tela=fotos_db)
 
 @app.route('/upload', methods=['POST'])
