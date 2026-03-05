@@ -5,116 +5,290 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Estúdio Pro - Galeria</title>
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
     />
+
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css"
+      rel="stylesheet"
+    />
+
     <style>
       :root {
-        --bg-app: #121212;
-        --bg-panel: #252525;
-        --text-main: #e0e0e0;
-        --text-muted: #9e9e9e;
         --primary: #3b82f6;
-        --track-color: #555555;
+        --text-main: #ffffff;
+        --text-muted: #a1a1aa;
+        --glass-bg: rgba(20, 20, 20, 0.45);
+        --glass-border: rgba(255, 255, 255, 0.1);
       }
-      body {
+
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
         font-family: "Inter", sans-serif;
-        background-color: var(--bg-app);
-        margin: 0;
-        padding: 40px 20px;
+        background-color: #000;
         color: var(--text-main);
-      }
-      .container {
-        max-width: 1200px;
-        margin: 0 auto;
+        overflow: hidden;
       }
 
-      .header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 30px;
-      }
-      .btn-voltar {
-        text-decoration: none;
-        color: var(--text-main);
-        font-weight: 500;
-        padding: 8px 16px;
-        background: var(--bg-panel);
-        border-radius: 6px;
-        transition: 0.2s;
-        font-size: 0.9rem;
-      }
-      .btn-voltar:hover {
-        background: #333;
-      }
-      .header h2 {
-        margin: 0;
-        font-size: 1.2rem;
-        font-weight: 600;
-        letter-spacing: 1px;
-        color: #fff;
+      .bg-blur {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        object-fit: cover;
+        filter: blur(40px) brightness(0.3);
+        z-index: 1;
+        transform: scale(1.1);
       }
 
-      .studio-grid {
-        display: grid;
-        grid-template-columns: 1fr 320px;
-        gap: 40px;
-        align-items: start;
-      }
-      @media (max-width: 900px) {
-        .studio-grid {
-          grid-template-columns: 1fr;
-        }
-      }
-
-      .preview-area {
+      .canvas-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
         display: flex;
         justify-content: center;
         align-items: center;
-        background: #000;
-        padding: 20px;
-        border-radius: 8px;
-        min-height: 60vh;
-        box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
-      }
-      .preview-area img {
-        max-width: 100%;
-        max-height: 75vh;
-        object-fit: contain;
+        z-index: 2;
+        padding: 40px 380px 40px 420px;
+        box-sizing: border-box;
       }
 
-      .controls-area {
-        background: var(--bg-panel);
-        padding: 24px;
-        border-radius: 8px;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      /* Importante para o Cropper não quebrar o layout */
+      .img-wrapper {
+        max-width: 100%;
+        max-height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
       }
-      .painel-titulo {
-        font-size: 0.75rem;
-        text-transform: uppercase;
+      .img-wrapper img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        border-radius: 4px;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        display: block;
+      }
+
+      .navbar {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        padding: 30px 50px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-sizing: border-box;
+        z-index: 10;
+      }
+      .brand {
+        font-size: 1.5rem;
+        font-weight: 700;
         letter-spacing: 1px;
+        text-transform: uppercase;
+      }
+
+      .glass-panel {
+        position: absolute;
+        z-index: 10;
+        top: 50%;
+        transform: translateY(-50%);
+        background: var(--glass-bg);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid var(--glass-border);
+        border-radius: 20px;
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+      }
+
+      .left-panel {
+        left: 50px;
+        width: 320px;
+        padding: 40px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+      .left-panel h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin: 0 0 10px 0;
+        line-height: 1.1;
+      }
+      .left-panel p {
         color: var(--text-muted);
-        margin-bottom: 20px;
-        border-bottom: 1px solid #333;
-        padding-bottom: 8px;
+        font-size: 1rem;
+        margin: 0 0 30px 0;
+        line-height: 1.5;
+      }
+      .input-glass {
+        width: 100%;
+        padding: 14px 16px;
+        background: rgba(0, 0, 0, 0.2);
+        border: 1px solid var(--glass-border);
+        color: white;
+        border-radius: 50px;
+        font-size: 0.95rem;
+        font-family: "Inter", sans-serif;
+        box-sizing: border-box;
+        margin-bottom: 15px;
+        transition: 0.3s;
+      }
+      .input-glass:focus {
+        outline: none;
+        border-color: var(--primary);
+        background: rgba(0, 0, 0, 0.4);
+      }
+      .btn-glass {
+        width: 100%;
+        padding: 14px 24px;
+        border-radius: 50px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: center;
+        border: none;
+        text-decoration: none;
+        display: block;
+        box-sizing: border-box;
+        margin-bottom: 12px;
+      }
+      .btn-primary {
+        background-color: var(--primary);
+        color: white;
+      }
+      .btn-primary:hover {
+        background-color: #2563eb;
+        transform: scale(1.02);
+      }
+      .btn-outline {
+        background-color: transparent;
+        border: 1px solid var(--text-main);
+        color: var(--text-main);
+      }
+      .btn-outline:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+      .btn-download {
+        border: 1px solid #10b981;
+        color: #10b981;
+        background: rgba(16, 185, 129, 0.05);
+      }
+      .btn-download:hover {
+        background: rgba(16, 185, 129, 0.15);
+        transform: scale(1.02);
+      }
+
+      .right-panel {
+        right: 30px;
+        display: flex;
+        flex-direction: row;
+        padding: 0;
+        width: 360px;
+        height: 600px;
+        overflow: hidden;
+      }
+
+      .panel-content {
+        flex: 1;
+        padding: 30px;
+        overflow-y: auto;
+      }
+      .panel-content::-webkit-scrollbar {
+        width: 6px;
+      }
+      .panel-content::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .panel-content::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 10px;
+      }
+
+      .toolbar-vertical {
+        width: 60px;
+        background: rgba(0, 0, 0, 0.4);
+        border-left: 1px solid var(--glass-border);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding-top: 25px;
+        gap: 20px;
+      }
+
+      .tool-icon {
+        width: 44px;
+        height: 44px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 10px;
+        cursor: pointer;
+        color: var(--text-muted);
+        transition: 0.2s;
+        border: 1px solid transparent;
+        background: transparent;
+      }
+      .tool-icon:hover {
+        color: white;
+        background: rgba(255, 255, 255, 0.05);
+      }
+      .tool-icon.active {
+        color: white;
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.2);
+      }
+      .tool-icon svg {
+        width: 20px;
+        height: 20px;
+      }
+
+      .tab {
+        display: none;
+      }
+      .tab.active {
+        display: block;
+        animation: fadeIn 0.3s ease;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(5px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
       }
 
       .lr-control {
-        margin-bottom: 20px;
+        margin-bottom: 22px;
       }
       .lr-header {
         display: flex;
         justify-content: space-between;
-        font-size: 0.85rem;
+        font-size: 0.8rem;
         font-weight: 500;
-        margin-bottom: 12px;
+        margin-bottom: 10px;
+        color: #ddd;
       }
-
       input[type="range"] {
         -webkit-appearance: none;
+        appearance: none;
         width: 100%;
         background: transparent;
+        margin: 0;
+        cursor: pointer;
       }
       input[type="range"]:focus {
         outline: none;
@@ -122,109 +296,142 @@
       input[type="range"]::-webkit-slider-runnable-track {
         width: 100%;
         height: 2px;
-        cursor: pointer;
-        background: var(--track-color);
+        background: rgba(255, 255, 255, 0.2);
         border-radius: 1px;
       }
       input[type="range"]::-webkit-slider-thumb {
-        height: 16px;
-        width: 16px;
+        height: 14px;
+        width: 14px;
         border-radius: 50%;
         background: #ffffff;
-        cursor: pointer;
         -webkit-appearance: none;
-        margin-top: -7px;
+        margin-top: -6px;
         box-shadow:
-          0 0 0 2px var(--bg-panel),
-          0 0 0 3px #888;
-        transition: transform 0.1s;
+          0 0 0 2px rgba(0, 0, 0, 0.2),
+          0 0 0 4px rgba(255, 255, 255, 0.1);
+        transition: 0.2s;
       }
       input[type="range"]::-webkit-slider-thumb:hover {
-        transform: scale(1.2);
+        transform: scale(1.3);
       }
 
-      .form-group {
-        margin-top: 30px;
-        margin-bottom: 20px;
-        padding-top: 20px;
-        border-top: 1px solid #333;
-      }
-      .form-group label {
-        display: block;
-        font-size: 0.8rem;
+      .preset-cat {
+        font-size: 0.75rem;
         color: var(--text-muted);
-        margin-bottom: 8px;
-      }
-      .form-group input[type="text"] {
-        width: 100%;
-        padding: 10px;
-        background: #1a1a1a;
-        border: 1px solid #333;
-        color: white;
-        border-radius: 6px;
-        font-family: "Inter";
-        box-sizing: border-box;
-      }
-      .form-group input[type="text"]:focus {
-        outline: none;
-        border-color: var(--primary);
-      }
-
-      .botoes-acao {
-        display: flex;
-        gap: 10px;
-        margin-top: 20px;
-      }
-      .btn {
-        flex: 1;
-        padding: 10px;
-        border-radius: 6px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin: 25px 0 10px 0;
         font-weight: 600;
+      }
+      .preset-btn {
+        width: 100%;
+        background: rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: white;
+        padding: 14px 16px;
+        border-radius: 10px;
+        text-align: left;
         cursor: pointer;
-        text-align: center;
-        border: none;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 10px;
+        font-family: "Inter", sans-serif;
         font-size: 0.9rem;
         transition: 0.2s;
       }
-      .btn-salvar {
-        background-color: var(--primary);
-        color: white;
+      .preset-btn:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: var(--primary);
       }
-      .btn-salvar:hover {
-        background-color: #2563eb;
+      .preset-btn span {
+        font-size: 1.2rem;
       }
-      .btn-resetar {
-        background-color: transparent;
-        border: 1px solid #555;
-        color: #ccc;
-      }
-      .btn-resetar:hover {
-        background-color: #333;
-        color: white;
+      .preset-btn.active {
+        border-color: var(--primary);
+        background: rgba(59, 130, 246, 0.2);
       }
     </style>
   </head>
   <body>
-    <div class="container">
-      <div class="header">
-        <a href="{{ url_for('index') }}" class="btn-voltar">← Cancelar</a>
-        <h2>MODO REVELAÇÃO</h2>
-        <div style="width: 90px"></div>
+    <img
+      class="bg-blur"
+      id="bgBlur"
+      src="{{ url_for('static', filename='uploads/' + foto.nome_arquivo) }}"
+      crossorigin="anonymous"
+    />
+
+    <div class="canvas-container">
+      <div class="img-wrapper">
+        <img
+          id="imagemPreview"
+          src="{{ url_for('static', filename='uploads/' + foto.nome_arquivo) }}"
+          crossorigin="anonymous"
+        />
       </div>
+    </div>
 
-      <div class="studio-grid">
-        <div class="preview-area">
-          <img
-            id="imagemPreview"
-            src="{{ url_for('static', filename='uploads/' + foto.nome_arquivo) }}"
-            alt="{{ foto.titulo }}"
-            crossorigin="anonymous"
-          />
-        </div>
+    <div class="navbar">
+      <div class="brand">Galeria Pro</div>
+    </div>
 
-        <div class="controls-area">
-          <div class="painel-titulo">Luz & Cor (Motor Canvas)</div>
+    <div class="glass-panel left-panel">
+      <h1>ESTÚDIO PRO</h1>
+      <p>
+        Ajuste os níveis de luz, contraste e extraia o máximo de detalhes da sua
+        fotografia.
+      </p>
 
+      <form
+        action="{{ url_for('editar_foto', id=foto.id) }}"
+        method="POST"
+        id="formEdicao"
+      >
+        <input type="hidden" name="imagem_base64" id="imagem_base64" />
+        <input
+          type="text"
+          name="titulo"
+          id="inputTitulo"
+          value="{{ foto.titulo }}"
+          required
+          class="input-glass"
+          placeholder="Nome do arquivo"
+        />
+
+        <button
+          type="submit"
+          class="btn-glass btn-primary"
+          onclick="salvarAntesDeEnviar()"
+        >
+          Salvar no Servidor
+        </button>
+        <button
+          type="button"
+          class="btn-glass btn-download"
+          onclick="baixarImagem()"
+        >
+          ⬇ Baixar Imagem (HD)
+        </button>
+        <button
+          type="button"
+          class="btn-glass btn-outline"
+          onclick="resetarTudo()"
+        >
+          Restaurar Original
+        </button>
+        <a
+          href="{{ url_for('index') }}"
+          class="btn-glass btn-outline"
+          style="margin-top: 10px; border-color: transparent; opacity: 0.7"
+          >← Voltar para Galeria</a
+        >
+      </form>
+    </div>
+
+    <div class="glass-panel right-panel">
+      <div class="panel-content">
+        <div id="aba-ajustes" class="tab active">
+          <h3 style="margin-top: 0; font-size: 1.1rem">Luz e Cor</h3>
           <div class="lr-control">
             <div class="lr-header">
               <span>Exposição</span> <span id="valExposicao">0.00</span>
@@ -269,71 +476,250 @@
             <input type="range" id="pretos" min="-100" max="100" value="0" />
           </div>
 
-          <form
-            action="{{ url_for('editar_foto', id=foto.id) }}"
-            method="POST"
-            id="formEdicao"
+          <h3
+            style="
+              margin-top: 30px;
+              font-size: 1.1rem;
+              padding-top: 20px;
+              border-top: 1px solid rgba(255, 255, 255, 0.1);
+            "
           >
-            <input type="hidden" name="imagem_base64" id="imagem_base64" />
-
-            <div class="form-group">
-              <label>NOME DO ARQUIVO</label>
-              <input
-                type="text"
-                name="titulo"
-                value="{{ foto.titulo }}"
-                required
-              />
+            Cor
+          </h3>
+          <div class="lr-control">
+            <div class="lr-header">
+              <span>Saturação</span> <span id="valSaturacao">0</span>
             </div>
-
-            <div class="botoes-acao">
-              <button
-                type="button"
-                class="btn btn-resetar"
-                onclick="resetarFiltros()"
-              >
-                Resetar
-              </button>
-              <button type="submit" class="btn btn-salvar">Salvar Foto</button>
-            </div>
-          </form>
+            <input type="range" id="saturacao" min="-100" max="100" value="0" />
+          </div>
         </div>
+
+        <div id="aba-presets" class="tab">
+          <h3 style="margin-top: 0; font-size: 1.1rem">Predefinições</h3>
+          <p style="font-size: 0.8rem; color: #aaa; margin-bottom: 20px">
+            Filtros profissionais com 1 clique.
+          </p>
+
+          <div class="preset-cat">Básico</div>
+          <button
+            class="preset-btn"
+            onclick="aplicarPreset(0, 0, 0, 0, 0, 0, 0)"
+          >
+            <span>🔄</span> Padrão (Original)
+          </button>
+          <button
+            class="preset-btn"
+            onclick="aplicarPreset(0, 15, -10, 20, 10, -5, 10)"
+          >
+            <span>🌟</span> Auto Aprimorar
+          </button>
+
+          <div class="preset-cat">Estilos</div>
+          <button
+            class="preset-btn"
+            onclick="aplicarPreset(0.2, 35, -20, 15, -10, -15, -15)"
+          >
+            <span>🎬</span> Cinematográfico
+          </button>
+          <button
+            class="preset-btn"
+            onclick="aplicarPreset(0, 10, -5, 25, -20, 30, -25)"
+          >
+            <span>🎞️</span> Vintage / Retrô
+          </button>
+          <button
+            class="preset-btn"
+            onclick="aplicarPreset(-0.1, 40, 10, -10, 20, -20, -100)"
+          >
+            <span>⚫</span> Preto e Branco Pro
+          </button>
+          <button
+            class="preset-btn"
+            onclick="aplicarPreset(0.3, 15, -30, 25, 10, -10, 25)"
+          >
+            <span>☀️</span> Verão Quente
+          </button>
+        </div>
+
+        <div id="aba-cortar" class="tab">
+          <h3 style="margin-top: 0; font-size: 1.1rem">Cortar e Girar</h3>
+          <p style="font-size: 0.8rem; color: #aaa; margin-bottom: 20px">
+            Redimensione o quadro da foto.
+          </p>
+
+          <div class="preset-cat">Proporções</div>
+          <button
+            class="preset-btn"
+            id="crop-free"
+            onclick="mudarProporcaoCorte(NaN, 'crop-free')"
+          >
+            <span>🔲</span> Livre
+          </button>
+          <button
+            class="preset-btn"
+            id="crop-1-1"
+            onclick="mudarProporcaoCorte(1, 'crop-1-1')"
+          >
+            <span>⏹️</span> Quadrado (1:1)
+          </button>
+          <button
+            class="preset-btn"
+            id="crop-4-3"
+            onclick="mudarProporcaoCorte(4 / 3, 'crop-4-3')"
+          >
+            <span>🖼️</span> Paisagem (4:3)
+          </button>
+          <button
+            class="preset-btn"
+            id="crop-16-9"
+            onclick="mudarProporcaoCorte(16 / 9, 'crop-16-9')"
+          >
+            <span>📺</span> Widescreen (16:9)
+          </button>
+
+          <div style="margin-top: 30px; display: flex; gap: 10px">
+            <button class="btn-glass btn-primary" onclick="aplicarCorte()">
+              Aplicar Corte
+            </button>
+            <button class="btn-glass btn-outline" onclick="cancelarCorte()">
+              Cancelar
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="toolbar-vertical">
+        <button
+          class="tool-icon active"
+          id="btn-ajustes"
+          onclick="trocarAba('aba-ajustes', 'btn-ajustes')"
+          title="Editar"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              d="M12 20V10M18 20V4M6 20v-4M6 12V4M12 6V4M6 16h.01M12 10h.01M18 14h.01"
+            ></path>
+            <circle cx="6" cy="14" r="2"></circle>
+            <circle cx="12" cy="8" r="2"></circle>
+            <circle cx="18" cy="16" r="2"></circle>
+          </svg>
+        </button>
+
+        <button
+          class="tool-icon"
+          id="btn-presets"
+          onclick="trocarAba('aba-presets', 'btn-presets')"
+          title="Predefinições"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+            ></path>
+          </svg>
+        </button>
+
+        <hr
+          style="
+            width: 30px;
+            border: none;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin: 10px 0;
+          "
+        />
+
+        <button
+          class="tool-icon"
+          id="btn-cortar"
+          onclick="abrirModoCorte()"
+          title="Cortar e Girar"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M6 2v14a2 2 0 0 0 2 2h14M18 22V8a2 2 0 0 0-2-2H2"></path>
+          </svg>
+        </button>
+
+        <button
+          class="tool-icon"
+          onclick="
+            alert(
+              'O Gráfico de Curvas de Tons requer processamento avançado e chegará em atualizações futuras.',
+            )
+          "
+          title="Curvas de Tons"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M3 3v18h18M3 21c4.5-9 9-9 18-9"></path>
+          </svg>
+        </button>
       </div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+
     <script>
+      // --- VARIÁVEIS DO CANVAS E IMAGEM ---
       const imagem = document.getElementById("imagemPreview");
+      const bgBlur = document.getElementById("bgBlur");
       const inputBase64 = document.getElementById("imagem_base64");
+      const inputTitulo = document.getElementById("inputTitulo");
 
-      const inExposicao = document.getElementById("exposicao");
-      const inContraste = document.getElementById("contraste");
-      const inRealces = document.getElementById("realces");
-      const inSombras = document.getElementById("sombras");
-      const inBrancos = document.getElementById("brancos");
-      const inPretos = document.getElementById("pretos");
+      const inExposicao = document.getElementById("exposicao"),
+        inContraste = document.getElementById("contraste"),
+        inRealces = document.getElementById("realces"),
+        inSombras = document.getElementById("sombras"),
+        inBrancos = document.getElementById("brancos"),
+        inPretos = document.getElementById("pretos"),
+        inSaturacao = document.getElementById("saturacao");
+      const txtExposicao = document.getElementById("valExposicao"),
+        txtContraste = document.getElementById("valContraste"),
+        txtRealces = document.getElementById("valRealces"),
+        txtSombras = document.getElementById("valSombras"),
+        txtBrancos = document.getElementById("valBrancos"),
+        txtPretos = document.getElementById("valPretos"),
+        txtSaturacao = document.getElementById("valSaturacao");
 
-      const txtExposicao = document.getElementById("valExposicao");
-      const txtContraste = document.getElementById("valContraste");
-      const txtRealces = document.getElementById("valRealces");
-      const txtSombras = document.getElementById("valSombras");
-      const txtBrancos = document.getElementById("valBrancos");
-      const txtPretos = document.getElementById("valPretos");
-
-      // --- MOTOR CANVAS ---
       const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d", { willReadFrequently: true });
+
       let originalPixels = null;
       let imgOriginal = new Image();
+      let cropper = null; // Variável para armazenar a instância do Cropper
 
-      // Carrega a imagem original na memória uma única vez ao abrir a tela
+      const URL_IMAGEM_INICIAL =
+        "{{ url_for('static', filename='uploads/' + foto.nome_arquivo) }}";
+
+      // --- INICIALIZAÇÃO DO MOTOR CANVAS ---
       imgOriginal.crossOrigin = "Anonymous";
       imgOriginal.onload = function () {
         canvas.width = imgOriginal.width;
         canvas.height = imgOriginal.height;
         ctx.drawImage(imgOriginal, 0, 0);
         originalPixels = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+        // Sempre que a imagem original recarregar (ex: após um corte), reprocessamos os filtros atuais
+        if (!cropper) processarImagem();
       };
-      imgOriginal.src = imagem.src;
+      imgOriginal.src = URL_IMAGEM_INICIAL;
 
       function formatar(num, isExp = false) {
         if (num > 0) return "+" + (isExp ? num.toFixed(2) : num);
@@ -341,9 +727,8 @@
         return isExp ? num.toFixed(2) : num;
       }
 
-      // A Mágica Matemática
       function processarImagem() {
-        if (!originalPixels) return;
+        if (!originalPixels || cropper) return; // Se o cropper estiver aberto, pausa os filtros
 
         txtExposicao.innerText = formatar(parseFloat(inExposicao.value), true);
         txtContraste.innerText = formatar(parseInt(inContraste.value));
@@ -351,8 +736,8 @@
         txtSombras.innerText = formatar(parseInt(inSombras.value));
         txtBrancos.innerText = formatar(parseInt(inBrancos.value));
         txtPretos.innerText = formatar(parseInt(inPretos.value));
+        txtSaturacao.innerText = formatar(parseInt(inSaturacao.value));
 
-        // Cria uma cópia fresca dos pixels originais para não estragar a foto base
         const imgData = new ImageData(
           new Uint8ClampedArray(originalPixels.data),
           originalPixels.width,
@@ -360,50 +745,46 @@
         );
         const data = imgData.data;
 
-        const exp = parseFloat(inExposicao.value);
-        const cont = parseInt(inContraste.value);
-        const hl = parseInt(inRealces.value);
-        const sh = parseInt(inSombras.value);
-        const wh = parseInt(inBrancos.value);
-        const bl = parseInt(inPretos.value);
-
+        const exp = parseFloat(inExposicao.value),
+          cont = parseInt(inContraste.value),
+          hl = parseInt(inRealces.value),
+          sh = parseInt(inSombras.value),
+          wh = parseInt(inBrancos.value),
+          bl = parseInt(inPretos.value);
+        const sat = (parseInt(inSaturacao.value) + 100) / 100;
         const contrastFactor = (259 * (cont + 255)) / (255 * (259 - cont));
         const expMult = Math.pow(2, exp);
 
-        // Varre todos os pixels da imagem (milhões de iterações em milissegundos)
         for (let i = 0; i < data.length; i += 4) {
-          let r = data[i];
-          let g = data[i + 1];
-          let b = data[i + 2];
+          let r = data[i],
+            g = data[i + 1],
+            b = data[i + 2];
 
-          // Exposição
           r *= expMult;
           g *= expMult;
           b *= expMult;
-
-          // Contraste
           r = contrastFactor * (r - 128) + 128;
           g = contrastFactor * (g - 128) + 128;
           b = contrastFactor * (b - 128) + 128;
 
-          // Luminância para isolar altas luzes e sombras
           let lum = 0.299 * r + 0.587 * g + 0.114 * b;
 
-          // Realces (Afeta apenas pixels claros)
+          r = lum + (r - lum) * sat;
+          g = lum + (g - lum) * sat;
+          b = lum + (b - lum) * sat;
+
           if (lum > 128) {
             let adj = hl * ((lum - 128) / 127);
             r += adj;
             g += adj;
             b += adj;
           }
-          // Sombras (Afeta apenas pixels escuros)
           if (lum <= 128) {
             let adj = sh * ((128 - lum) / 128);
             r += adj;
             g += adj;
             b += adj;
           }
-          // Brancos e Pretos puros
           if (lum > 200) {
             let adj = wh * ((lum - 200) / 55);
             r += adj;
@@ -422,16 +803,13 @@
           data[i + 2] = b;
         }
 
-        // Pinta a tela invisível com a nova imagem e converte para arquivo
         ctx.putImageData(imgData, 0, 0);
         const imagemEditadaBase64 = canvas.toDataURL("image/jpeg", 0.9);
-
-        // Exibe na tela e guarda no formulário para o Python
         imagem.src = imagemEditadaBase64;
+        bgBlur.src = imagemEditadaBase64;
         inputBase64.value = imagemEditadaBase64;
       }
 
-      // Sistema de 'Debounce' (Espera você parar de arrastar o mouse para processar, evitando travamentos)
       let timeoutId;
       [
         inExposicao,
@@ -440,21 +818,137 @@
         inSombras,
         inBrancos,
         inPretos,
+        inSaturacao,
       ].forEach((slider) => {
         slider.addEventListener("input", () => {
           clearTimeout(timeoutId);
-          timeoutId = setTimeout(processarImagem, 50); // Processa 50ms após soltar
+          timeoutId = setTimeout(processarImagem, 50);
         });
       });
 
-      function resetarFiltros() {
+      // --- LÓGICA DAS ABAS ---
+      function trocarAba(abaId, btnId) {
+        // Se estivermos saindo da aba de corte sem aplicar, destruímos o cropper
+        if (cropper && abaId !== "aba-cortar") {
+          cancelarCorte();
+        }
+
+        document
+          .querySelectorAll(".tab")
+          .forEach((t) => t.classList.remove("active"));
+        document
+          .querySelectorAll(".tool-icon")
+          .forEach((b) => b.classList.remove("active"));
+
+        document.getElementById(abaId).classList.add("active");
+        document.getElementById(btnId).classList.add("active");
+      }
+
+      // --- LÓGICA DO CROPPER.JS ---
+      function abrirModoCorte() {
+        trocarAba("aba-cortar", "btn-cortar");
+
+        // Inicia a grade de corte em cima da imagem atual
+        cropper = new Cropper(imagem, {
+          viewMode: 1, // Restringe a caixa de corte para não sair da imagem
+          dragMode: "crop",
+          background: false, // Desliga o fundo xadrez feio do cropper
+          guides: true, // Mostra a regra dos terços (as linhas da grade)
+          autoCropArea: 0.9, // Tamanho inicial da caixa
+          responsive: true,
+        });
+
+        // Marca o botão "Livre" como ativo
+        mudarProporcaoCorte(NaN, "crop-free");
+      }
+
+      function mudarProporcaoCorte(ratio, btnId) {
+        if (!cropper) return;
+        cropper.setAspectRatio(ratio);
+
+        // Estilo visual dos botões
+        document
+          .querySelectorAll("#aba-cortar .preset-btn")
+          .forEach((btn) => btn.classList.remove("active"));
+        document.getElementById(btnId).classList.add("active");
+      }
+
+      function aplicarCorte() {
+        if (!cropper) return;
+
+        // 1. Pega a imagem cortada como um novo Canvas
+        const canvasCortado = cropper.getCroppedCanvas();
+
+        // 2. Extrai a nova imagem cortada em Base64 (qualidade máxima)
+        const base64Cortado = canvasCortado.toDataURL("image/jpeg", 1.0);
+
+        // 3. Destrói a interface gráfica do Cropper
+        cropper.destroy();
+        cropper = null;
+
+        // 4. A MÁGICA: Substituímos a nossa 'imgOriginal' matemática pela imagem cortada!
+        // Isso faz com que os filtros agora se apliquem à nova proporção, sem distorcer.
+        imgOriginal.src = base64Cortado;
+
+        // 5. Volta para a aba de ajustes para o usuário continuar editando
+        trocarAba("aba-ajustes", "btn-ajustes");
+      }
+
+      function cancelarCorte() {
+        if (cropper) {
+          cropper.destroy();
+          cropper = null;
+          // Restaura a visualização normal com os filtros atuais aplicados
+          processarImagem();
+        }
+        trocarAba("aba-ajustes", "btn-ajustes");
+      }
+
+      // --- OUTRAS FERRAMENTAS ---
+      function aplicarPreset(exp, cont, hl, sh, wh, bl, saturacao) {
+        inExposicao.value = exp;
+        inContraste.value = cont;
+        inRealces.value = hl;
+        inSombras.value = sh;
+        inBrancos.value = wh;
+        inPretos.value = bl;
+        inSaturacao.value = saturacao;
+        processarImagem();
+        trocarAba("aba-ajustes", "btn-ajustes");
+      }
+
+      function resetarTudo() {
         inExposicao.value = 0;
         inContraste.value = 0;
         inRealces.value = 0;
         inSombras.value = 0;
         inBrancos.value = 0;
         inPretos.value = 0;
-        processarImagem();
+        inSaturacao.value = 0;
+        // Reseta a imagem cortada para a original do servidor
+        imgOriginal.src = URL_IMAGEM_INICIAL;
+        // imgOriginal.onload vai chamar o processarImagem automaticamente
+      }
+
+      function salvarAntesDeEnviar() {
+        // Garante que o input escondido tem a imagem final antes do Python salvar
+        if (cropper) aplicarCorte(); // Se o utilizador clicar em Salvar enquanto corta, aplicamos o corte primeiro
+        inputBase64.value = imagem.src;
+      }
+
+      function baixarImagem() {
+        if (cropper) aplicarCorte();
+        const linkDownload = document.createElement("a");
+        linkDownload.href = imagem.src;
+        let nomeFicheiro = inputTitulo.value
+          .trim()
+          .replace(/[^a-z0-9]/gi, "_")
+          .toLowerCase();
+        linkDownload.download =
+          (nomeFicheiro || "foto_editada") + "_galeria_pro.jpg";
+        document.body.appendChild(linkDownload);
+        linkDownload.click();
+        document.body.removeChild(linkDownload);
       }
     </script>
   </body>

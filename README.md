@@ -1,75 +1,66 @@
-# 📸 Galeria de Fotos Full Stack (SaaS & Advanced Photo Editor)
+# 📸 Galeria Pro - SaaS & Advanced Image Editor
 
-Este é um projeto Full Stack em Python (Flask) estruturado como um **SaaS (Software as a Service)**. O sistema possui autenticação de usuários, isolamento de banco de dados e um **Estúdio de Edição de Imagens Profissional** embutido, capaz de processar pixels em tempo real diretamente no navegador, tudo embalado em uma interface Premium.
+Este projeto evoluiu de uma simples galeria para uma plataforma **Full Stack (SaaS)** completa. Inspirado no Adobe Lightroom, o sistema oferece uma experiência de edição profissional diretamente no navegador, utilizando processamento matemático de pixels e ferramentas de manipulação de imagem de alto nível.
 
-## 🚀 Funcionalidades da Aplicação
+## 🚀 Novas Funcionalidades Premium
 
-- **Landing Page Premium (Vitrine):** Página inicial de alta conversão inspirada no Adobe Lightroom, com design imersivo e elementos em Glassmorphism (Efeito Vidro).
-- **Estúdio de Edição (Motor Canvas):** Interface de edição em Dark Mode. Processamento matemático de imagem no lado do cliente utilizando HTML5 `<canvas>`.
-- **Manipulação de Pixels em Tempo Real:** Algoritmos de luminância para ajustes finos de Exposição, Contraste, Realces (Highlights), Sombras, Brancos e Pretos.
-- **Autenticação Imersiva:** Modais de login e páginas de cadastro perfeitamente integrados ao Dark Mode, evitando a quebra de imersão do usuário. Segurança garantida com `Flask-Login` e hash criptográfico via `Werkzeug Security`.
-- **Processamento Backend Seguro:** Recepção assíncrona da imagem editada via Base64. O Flask decodifica, gera um hash único (`uuid`) para evitar cache do navegador, salva o novo arquivo e deleta a versão anterior.
-- **Arquitetura Multi-tenant:** Rotas protegidas e isolamento no MySQL (Foreign Keys). Cada usuário interage estritamente com seus próprios arquivos.
-- **Interface e UX Avançadas:** Upload via Drag and Drop, design responsivo com grid Masonry, notificações flutuantes (Toasts) e visualização Lightbox (tela cheia).
+- **Landing Page Cinematográfica:** Interface de entrada imersiva com Dark Mode e efeito Glassmorphism.
+- **Estúdio de Edição (Engine Canvas):** Motor de renderização em tempo real que permite ajustes finos de Exposição, Contraste, Realces, Sombras, Brancos, Pretos e Saturação.
+- **Sistema de Predefinições (Presets):** Aplicação de filtros profissionais (Cinematográfico, Vintage, P&B Pro) com apenas um clique.
+- **Ferramenta de Corte (Crop Pro):** Integração com a biblioteca `Cropper.js` para redimensionamento de fotos com grade de "Regra dos Terços" e proporções fixas (1:1, 16:9, 4:3).
+- **Exportação HD:** Funcionalidade de download instantâneo da imagem editada em alta definição diretamente para o computador do usuário.
+- **Autenticação com UX Fluida:** Modais de login e páginas de cadastro consistentes com a identidade visual do software.
 
-## 🛠️ Tecnologias Utilizadas
+## 🛠️ Tecnologias de Ponta
 
-- **Backend:** Python 3, Flask, Flask-Login, Werkzeug, UUID, Base64
-- **Banco de Dados:** MySQL, PyMySQL
-- **Frontend:** HTML5 Canvas (Image Processing), CSS3 (Glassmorphism, Variáveis & Dark Theme Premium), JavaScript (Vanilla), Jinja2
+- **Backend:** Python 3 + Flask
+- **Banco de Dados:** MySQL com arquitetura Multi-tenant (isolamento de dados por usuário)
+- **Processamento de Imagem:** HTML5 Canvas API + Cropper.js
+- **Frontend:** Modern CSS (Flexbox/Grid), Variáveis, Backdrop-filter e Vanilla JavaScript
 
-## ⚙️ Como Rodar o Projeto Localmente
+## ⚙️ Instalação e Configuração
 
-### 1. Preparando o Banco de Dados
+### 1. Requisitos de Banco de Dados
 
-Certifique-se de ter um servidor MySQL rodando. Execute o script abaixo para criar as tabelas:
+Execute o script SQL para estruturar o seu ambiente MySQL:
 
 ```sql
 CREATE DATABASE galeria_db;
 USE galeria_db;
 
--- Tabela de Usuários
 CREATE TABLE usuarios (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
     email VARCHAR(120) UNIQUE NOT NULL,
-    senha_hash VARCHAR(255) NOT NULL,
-    data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    senha_hash VARCHAR(255) NOT NULL
 );
 
--- Tabela de Fotos (Relacionada ao Usuário)
 CREATE TABLE fotos (
     id INT AUTO_INCREMENT PRIMARY KEY,
     titulo VARCHAR(100) NOT NULL,
     nome_arquivo VARCHAR(255) NOT NULL,
-    data_upload TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     usuario_id INT,
-    CONSTRAINT fk_usuario FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
 );
 ```
 
-### 2. Configurando o Ambiente e Instalando Dependências
-
-Abra o terminal, clone o repositório, ative o ambiente virtual e instale as bibliotecas:
+### 2. Rodando o Projeto
 
 ```bash
-git clone [https://github.com/SEU_USUARIO/galeria-flask-python.git](https://github.com/SEU_USUARIO/galeria-flask-python.git)
-cd galeria-flask-python
+# Clone o repositório
+git clone [https://github.com/Allan14GDS/projeto-galeria-fotos.git](https://github.com/Allan14GDS/projeto-galeria-fotos.git)
 
-# Crie e ative o ambiente virtual
-python -m venv venv
-venv\Scripts\activate  # No Linux/Mac use: source venv/bin/activate
-
-# Instale os pacotes necessários
+# Instale as dependências
 pip install Flask PyMySQL Werkzeug Flask-Login
-```
 
-### 3. Rodando o Servidor
-
-Inicie a aplicação:
-
-```bash
+# Execute a aplicação
 python app.py
 ```
 
-Acesse no seu navegador: `http://127.0.0.1:5000`
+## 📈 Roadmap de Evolução
+
+- [x] Motor de processamento via Canvas
+- [x] Ferramenta de Crop (Recorte)
+- [x] Sistema de Presets
+- [ ] Gráfico de Curva de Tons (Fase 3)
+- [ ] Deploy em Nuvem (AWS/Heroku)
